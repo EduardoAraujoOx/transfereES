@@ -64,16 +64,54 @@ export async function fetchExecutores(idPlano) {
   return fetchWithAutoProxy(url);
 }
 
-// Buscar metas de um executor (via plano de trabalho)
-export async function fetchMetas(idPlano) {
-  const url = `${BASE_URL}/meta_especial?id_plano_acao=eq.${idPlano}`;
+// Buscar plano de trabalho de um plano de ação
+export async function fetchPlanoTrabalho(idPlano) {
+  const url = `${BASE_URL}/plano_trabalho_especial?id_plano_acao=eq.${idPlano}`;
   return fetchWithAutoProxy(url);
+}
+
+// Buscar metas de um executor
+export async function fetchMetasPorExecutor(idExecutor) {
+  const url = `${BASE_URL}/meta_especial?id_executor=eq.${idExecutor}`;
+  return fetchWithAutoProxy(url);
+}
+
+// Extrair área principal do campo codigo_descricao_areas_politicas_publicas_plano_acao
+// Ex: "15-Urbanismo / 451-Infraestrutura Urbana" -> "Urbanismo"
+function extrairAreaPrincipal(texto) {
+  if (!texto) return 'Outros';
+  // Pega a primeira área (antes da primeira vírgula se houver múltiplas)
+  const primeiraArea = texto.split(',')[0].trim();
+  // Extrai o nome da área (ex: "15-Urbanismo / 451-..." -> "Urbanismo")
+  const match = primeiraArea.match(/^\d+-([^/]+)/);
+  if (match) {
+    return match[1].trim();
+  }
+  return 'Outros';
+}
+
+// Mapear situação do plano de trabalho para texto amigável
+function mapearSituacaoPlanoTrabalho(situacao) {
+  if (!situacao) return 'Não Cadastrado';
+  const mapa = {
+    'APROVADO': 'Aprovado',
+    'EM_ELABORACAO': 'Em Elaboração',
+    'ENVIADO_ANALISE': 'Enviado para Análise',
+    'EM_ANALISE': 'Em Análise',
+    'CONCLUIDO_NT_TCU': 'Legado ADPF 854 STF / NT-TCU',
+    'LEGADO_ADPF': 'Legado ADPF 854 STF / NT-TCU',
+    'NAO_CADASTRADO': 'Não Cadastrado',
+    'IMPEDIDO': 'Impedido',
+    'CANCELADO': 'Cancelado'
+  };
+  return mapa[situacao.toUpperCase()] || situacao.replace(/_/g, ' ');
 }
 
 // Processar dados de um plano
 function processarPlano(plano) {
   const valorCusteio = parseFloat(plano.valor_custeio_plano_acao || 0);
   const valorInvestimento = parseFloat(plano.valor_investimento_plano_acao || 0);
+  const areaPolitica = extrairAreaPrincipal(plano.codigo_descricao_areas_politicas_publicas_plano_acao);
 
   return {
     id: plano.id_plano_acao?.toString(),
@@ -82,7 +120,7 @@ function processarPlano(plano) {
     situacao: plano.situacao_plano_acao || 'AGUARDANDO_CIENCIA',
     parlamentar: plano.nome_parlamentar_emenda_plano_acao || 'Não informado',
     numero_emenda: plano.numero_emenda_parlamentar_plano_acao || '',
-    area_politica: plano.descricao_funcao_plano_acao || 'Outros',
+    area_politica: areaPolitica,
     valor_custeio: valorCusteio,
     valor_investimento: valorInvestimento,
     valor_total: valorCusteio + valorInvestimento,
@@ -101,14 +139,14 @@ function processarPlano(plano) {
 }
 
 // Processar executor
-function processarExecutor(executor, plano) {
+function processarExecutor(executor, plano, situacaoPlanoTrabalho = null) {
   return {
     id: executor.id_executor?.toString(),
     cnpj: executor.cnpj_executor || '',
     nome: executor.nome_executor || 'Executor não informado',
     objeto: executor.objeto_executor || '',
     detalhamento_objeto: executor.objeto_executor || '',
-    situacao_plano_trabalho: 'Em Análise',
+    situacao_plano_trabalho: mapearSituacaoPlanoTrabalho(situacaoPlanoTrabalho),
     numero_plano_trabalho: '',
     valor_custeio: parseFloat(executor.vl_custeio_executor || 0),
     valor_investimento: parseFloat(executor.vl_investimento_executor || 0),
@@ -117,16 +155,33 @@ function processarExecutor(executor, plano) {
       `${executor.numero_agencia_executor}${executor.dv_agencia_executor ? '-' + executor.dv_agencia_executor : ''}` : null,
     conta: executor.numero_conta_executor ?
       `${executor.numero_conta_executor}${executor.dv_conta_executor ? '-' + executor.dv_conta_executor : ''}` : null,
-    situacao_conta: 'Conta Ativa',
+    situacao_conta: executor.descricao_situacao_dado_bancario_executor || 'Conta Ativa',
     plano: plano,
     metas: []
   };
 }
 
+// Processar meta
+function processarMeta(meta) {
+  return {
+    id: meta.id_meta,
+    sequencial: meta.sequencial_meta || 1,
+    nome: meta.nome_meta || '',
+    descricao: meta.desc_meta || '',
+    unidade_medida: meta.un_medida_meta || 'Unidade',
+    quantidade: parseFloat(meta.qt_uniade_meta || 0),
+    valor_custeio_emenda: parseFloat(meta.vl_custeio_emenda_especial_meta || 0),
+    valor_investimento_emenda: parseFloat(meta.vl_investimento_emenda_especial_meta || 0),
+    valor_custeio_proprio: parseFloat(meta.vl_custeio_recursos_proprios_meta || 0),
+    valor_investimento_proprio: parseFloat(meta.vl_investimento_recursos_proprios_meta || 0),
+    prazo_meses: meta.qt_meses_meta || 12
+  };
+}
+
 // Buscar todos os dados agregados (para página inicial)
 export async function fetchDadosAgregados() {
-  // Buscar planos de todos os anos relevantes
-  const anos = [2022, 2023, 2024, 2025];
+  // Buscar planos de todos os anos relevantes (incluindo 2021)
+  const anos = [2021, 2022, 2023, 2024, 2025];
   const todosPlanos = [];
 
   for (const ano of anos) {
@@ -163,12 +218,14 @@ function processarDadosAgregados(planosRaw) {
 
     // Por ente
     if (!porEnte[cnpj]) {
-      const tipo = (plano.tipo_beneficiario || '').toUpperCase();
+      const nome = plano.nome_beneficiario || 'Não informado';
+      const isEstado = nome.toUpperCase().includes('ESTADO') ||
+                       nome.toUpperCase().includes('GOVERNO DO ESTADO');
       porEnte[cnpj] = {
         id: cnpj,
         cnpj,
-        nome: plano.nome_beneficiario || 'Não informado',
-        tipo: tipo === 'ESTADO' || tipo.includes('ESTADO') ? 'estado' : 'municipio',
+        nome: nome,
+        tipo: isEstado ? 'estado' : 'municipio',
         anos: {},
         planos: []
       };
@@ -229,15 +286,27 @@ function processarDadosAgregados(planosRaw) {
   };
 }
 
-// Buscar detalhes completos de um ente (incluindo executores)
+// Buscar detalhes completos de um ente (incluindo executores e situação do plano de trabalho)
 export async function fetchEnteCompleto(ente) {
   const planosComExecutores = await Promise.all(
-    ente.planos.slice(0, 20).map(async (plano) => { // Limitar a 20 para performance
+    ente.planos.map(async (plano) => {
       try {
-        const executoresRaw = await fetchExecutores(plano.id);
+        // Buscar executores e plano de trabalho em paralelo
+        const [executoresRaw, planosTrabalhoRaw] = await Promise.all([
+          fetchExecutores(plano.id),
+          fetchPlanoTrabalho(plano.id).catch(() => [])
+        ]);
+
+        // Pegar a situação do plano de trabalho (pode haver múltiplos, pegamos o primeiro)
+        const planoTrabalho = Array.isArray(planosTrabalhoRaw) && planosTrabalhoRaw.length > 0
+          ? planosTrabalhoRaw[0]
+          : null;
+        const situacaoPlanoTrabalho = planoTrabalho?.situacao_plano_trabalho || null;
+
         const executores = (Array.isArray(executoresRaw) ? executoresRaw : [])
-          .map(exec => processarExecutor(exec, plano));
-        return { ...plano, executores };
+          .map(exec => processarExecutor(exec, plano, situacaoPlanoTrabalho));
+
+        return { ...plano, executores, situacao_plano_trabalho: situacaoPlanoTrabalho };
       } catch (error) {
         console.error(`Erro ao buscar executores do plano ${plano.id}:`, error);
         return { ...plano, executores: [] };
@@ -251,25 +320,12 @@ export async function fetchEnteCompleto(ente) {
 // Buscar metas de um executor
 export async function fetchMetasExecutor(idPlano, idExecutor) {
   try {
-    const metasRaw = await fetchMetas(idPlano);
+    const metasRaw = await fetchMetasPorExecutor(idExecutor);
     const metas = (Array.isArray(metasRaw) ? metasRaw : [])
-      .filter(m => m.id_executor === parseInt(idExecutor))
-      .map(meta => ({
-        id: meta.id_meta,
-        sequencial: meta.sequencial_meta || 1,
-        nome: meta.nome_meta || '',
-        descricao: meta.descricao_meta || '',
-        unidade_medida: meta.unidade_medida_meta || 'Unidade',
-        quantidade: meta.quantidade_meta || 0,
-        valor_custeio_emenda: parseFloat(meta.vl_custeio_meta || 0),
-        valor_investimento_emenda: parseFloat(meta.vl_investimento_meta || 0),
-        valor_custeio_proprio: 0,
-        valor_investimento_proprio: 0,
-        prazo_meses: meta.prazo_meta || 12
-      }));
+      .map(processarMeta);
     return metas;
   } catch (error) {
-    console.error(`Erro ao buscar metas:`, error);
+    console.error(`Erro ao buscar metas do executor ${idExecutor}:`, error);
     return [];
   }
 }
@@ -277,7 +333,8 @@ export async function fetchMetasExecutor(idPlano, idExecutor) {
 export default {
   fetchPlanosAcaoES,
   fetchExecutores,
-  fetchMetas,
+  fetchPlanoTrabalho,
+  fetchMetasPorExecutor,
   fetchDadosAgregados,
   fetchEnteCompleto,
   fetchMetasExecutor

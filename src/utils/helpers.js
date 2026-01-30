@@ -28,9 +28,14 @@ export const getSituacaoTrabalho = (situacao) => {
   const mapa = {
     'Aprovado': { label: 'Aprovado', cor: 'text-emerald-700', bg: 'bg-emerald-50' },
     'Em Análise': { label: 'Em Análise', cor: 'text-amber-700', bg: 'bg-amber-50' },
-    'Impedido': { label: 'Impedido', cor: 'text-red-700', bg: 'bg-red-50' }
+    'Em Elaboração': { label: 'Em Elaboração', cor: 'text-blue-700', bg: 'bg-blue-50' },
+    'Enviado para Análise': { label: 'Enviado para Análise', cor: 'text-cyan-700', bg: 'bg-cyan-50' },
+    'Legado ADPF 854 STF / NT-TCU': { label: 'Legado ADPF 854 STF / NT-TCU', cor: 'text-purple-700', bg: 'bg-purple-50' },
+    'Não Cadastrado': { label: 'Não Cadastrado', cor: 'text-slate-600', bg: 'bg-slate-100' },
+    'Impedido': { label: 'Impedido', cor: 'text-red-700', bg: 'bg-red-50' },
+    'Cancelado': { label: 'Cancelado', cor: 'text-red-700', bg: 'bg-red-50' }
   };
-  return mapa[situacao] || { label: situacao, cor: 'text-slate-600', bg: 'bg-slate-100' };
+  return mapa[situacao] || { label: situacao || 'Não Cadastrado', cor: 'text-slate-600', bg: 'bg-slate-100' };
 };
 
 export const getStatusRecurso = (recebido) => {

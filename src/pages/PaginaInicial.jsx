@@ -121,19 +121,17 @@ export default function PaginaInicial({ dados, onEnte, onParlamentar }) {
                       <span className="text-sm font-semibold text-slate-600 w-12">{ano}</span>
                       <div className="flex-1 relative">
                         <div className="h-9 bg-slate-100 rounded-lg overflow-hidden">
-                          <div 
-                            className="h-full rounded-lg"
-                            style={{ 
-                              width: Math.max(p, 15) + '%',
+                          <div
+                            className="h-full rounded-lg relative"
+                            style={{
+                              width: Math.max(p, 18) + '%',
                               background: 'linear-gradient(90deg, #0d9488, #06b6d4)'
                             }}
-                          />
-                        </div>
-                        <div 
-                          className="absolute top-0 h-9 flex items-center pl-2" 
-                          style={{ left: Math.max(p, 15) + '%' }}
-                        >
-                          <span className="text-sm font-bold text-slate-700">{formatarMoedaCompacta(v)}</span>
+                          >
+                            <div className="absolute inset-0 flex items-center justify-end pr-3">
+                              <span className="text-sm font-bold text-white drop-shadow-sm">{formatarMoedaCompacta(v)}</span>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
