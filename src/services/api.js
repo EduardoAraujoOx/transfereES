@@ -1,11 +1,19 @@
-const BASE_URL = 'https://api.transferegov.sistema.gov.br/transferencia-especial';
-const UF = 'ES';
+// API TransfereGov - URL CORRETA
+const BASE_URL = 'https://api.transferegov.gestao.gov.br/transferenciasespeciais';
 
-// Cache simples para evitar requisições repetidas
+// Proxies CORS para fallback automático
+const corsProxies = [
+  { name: 'corsproxy', url: 'https://corsproxy.io/?' },
+  { name: 'allorigins', url: 'https://api.allorigins.win/raw?url=' },
+  { name: 'direct', url: '' }
+];
+
+// Cache simples
 const cache = new Map();
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutos
 
-async function fetchWithCache(url, options = {}) {
+// Fetch com fallback automático entre proxies
+async function fetchWithAutoProxy(url) {
   const cacheKey = url;
   const cached = cache.get(cacheKey);
 
@@ -13,129 +21,126 @@ async function fetchWithCache(url, options = {}) {
     return cached.data;
   }
 
-  const response = await fetch(url, {
-    ...options,
-    headers: {
-      'Accept': 'application/json',
-      ...options.headers,
-    },
-  });
+  let lastError = null;
 
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+  for (const proxy of corsProxies) {
+    try {
+      const fullUrl = proxy.url ? proxy.url + encodeURIComponent(url) : url;
+
+      const response = await fetch(fullUrl, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      cache.set(cacheKey, { data, timestamp: Date.now() });
+      return data;
+    } catch (err) {
+      console.log(`Proxy ${proxy.name} falhou, tentando próximo...`);
+      lastError = err;
+    }
   }
 
-  const data = await response.json();
-  cache.set(cacheKey, { data, timestamp: Date.now() });
-  return data;
+  throw lastError || new Error('Todos os proxies falharam');
 }
 
 // Buscar todos os planos de ação do ES
-export async function fetchPlanosAcao(ano = null, pagina = 1, tamanhoPagina = 500) {
-  let url = `${BASE_URL}/plano-acao?uf=${UF}&pagina=${pagina}&tamanhoPagina=${tamanhoPagina}`;
-  if (ano) url += `&ano=${ano}`;
-  return fetchWithCache(url);
-}
-
-// Buscar detalhe de um plano
-export async function fetchPlanoDetalhe(idPlano) {
-  return fetchWithCache(`${BASE_URL}/plano-acao/${idPlano}`);
+export async function fetchPlanosAcaoES(ano = null) {
+  let url = `${BASE_URL}/plano_acao_especial?uf_beneficiario_plano_acao=eq.ES`;
+  if (ano) url += `&ano_plano_acao=eq.${ano}`;
+  return fetchWithAutoProxy(url);
 }
 
 // Buscar executores de um plano
 export async function fetchExecutores(idPlano) {
-  return fetchWithCache(`${BASE_URL}/plano-acao/${idPlano}/executor`);
+  const url = `${BASE_URL}/executor_especial?id_plano_acao=eq.${idPlano}`;
+  return fetchWithAutoProxy(url);
 }
 
-// Buscar metas de um executor
-export async function fetchMetas(idPlano, idExecutor) {
-  return fetchWithCache(`${BASE_URL}/plano-acao/${idPlano}/executor/${idExecutor}/meta`);
+// Buscar metas de um executor (via plano de trabalho)
+export async function fetchMetas(idPlano) {
+  const url = `${BASE_URL}/meta_especial?id_plano_acao=eq.${idPlano}`;
+  return fetchWithAutoProxy(url);
 }
 
-// Mapear situação do plano de trabalho
-function mapearSituacaoPlanoTrabalho(codigo) {
-  const mapa = {
-    1: 'Em Elaboração',
-    2: 'Em Análise',
-    3: 'Aprovado',
-    4: 'Em Execução',
-    5: 'Concluído',
-    6: 'Impedido',
-    7: 'Cancelado'
-  };
-  return mapa[codigo] || 'Em Análise';
-}
-
-// Processar dados de um plano de ação da API para o formato do frontend
+// Processar dados de um plano
 function processarPlano(plano) {
+  const valorCusteio = parseFloat(plano.valor_custeio_plano_acao || 0);
+  const valorInvestimento = parseFloat(plano.valor_investimento_plano_acao || 0);
+
   return {
-    id: plano.id_plano_acao?.toString() || plano.id?.toString(),
-    codigo: plano.nr_plano_acao || '',
-    ano: plano.ano_plano_acao || plano.ano_emenda,
+    id: plano.id_plano_acao?.toString(),
+    codigo: plano.codigo_plano_acao || '',
+    ano: plano.ano_plano_acao,
     situacao: plano.situacao_plano_acao || 'AGUARDANDO_CIENCIA',
-    parlamentar: plano.nome_parlamentar || 'Não informado',
-    numero_emenda: plano.nr_emenda || '',
-    area_politica: plano.ds_funcao || 'Outros',
-    valor_custeio: plano.vl_custeio_emenda_especial || 0,
-    valor_investimento: plano.vl_investimento_emenda_especial || 0,
-    valor_total: (plano.vl_custeio_emenda_especial || 0) + (plano.vl_investimento_emenda_especial || 0),
-    recurso_recebido: plano.situacao_plano_acao === 'CIENTE',
-    banco: plano.nm_banco_beneficiario ? `${plano.cd_banco_beneficiario} - ${plano.nm_banco_beneficiario}` : null,
-    agencia: plano.nr_agencia_beneficiario,
-    conta: plano.nr_conta_beneficiario,
-    situacao_conta: plano.situacao_conta_beneficiario || 'Conta Ativa',
-    motivo_impedimento: plano.motivo_impedimento,
-    orgao_analise: plano.orgao_analise,
-    cnpj_beneficiario: plano.cnpj_beneficiario,
-    nome_beneficiario: plano.nome_beneficiario,
-    tipo_beneficiario: plano.tipo_beneficiario,
+    parlamentar: plano.nome_parlamentar_emenda_plano_acao || 'Não informado',
+    numero_emenda: plano.numero_emenda_parlamentar_plano_acao || '',
+    area_politica: plano.descricao_funcao_plano_acao || 'Outros',
+    valor_custeio: valorCusteio,
+    valor_investimento: valorInvestimento,
+    valor_total: valorCusteio + valorInvestimento,
+    recurso_recebido: (plano.situacao_plano_acao || '').toUpperCase().includes('CIENTE'),
+    banco: plano.nome_banco_plano_acao || null,
+    agencia: plano.numero_agencia_plano_acao ?
+      `${plano.numero_agencia_plano_acao}${plano.dv_agencia_plano_acao ? '-' + plano.dv_agencia_plano_acao : ''}` : null,
+    conta: plano.numero_conta_plano_acao ?
+      `${plano.numero_conta_plano_acao}${plano.dv_conta_plano_acao ? '-' + plano.dv_conta_plano_acao : ''}` : null,
+    situacao_conta: 'Conta Ativa',
+    cnpj_beneficiario: plano.cnpj_beneficiario_plano_acao,
+    nome_beneficiario: plano.nome_beneficiario_plano_acao || 'Não informado',
+    tipo_beneficiario: plano.tipo_beneficiario_plano_acao,
     executores: []
   };
 }
 
-// Processar executor da API para o formato do frontend
+// Processar executor
 function processarExecutor(executor, plano) {
   return {
-    id: executor.id_executor?.toString() || executor.id?.toString(),
+    id: executor.id_executor?.toString(),
     cnpj: executor.cnpj_executor || '',
     nome: executor.nome_executor || 'Executor não informado',
-    objeto: executor.ds_objeto_executor || '',
-    detalhamento_objeto: executor.ds_detalhamento_objeto || executor.ds_objeto_executor || '',
-    situacao_plano_trabalho: mapearSituacaoPlanoTrabalho(executor.cd_situacao_plano_trabalho) || 'Em Análise',
-    numero_plano_trabalho: executor.nr_plano_trabalho || '',
-    valor_custeio: executor.vl_custeio_executor || 0,
-    valor_investimento: executor.vl_investimento_executor || 0,
-    banco: executor.nm_banco_executor ? `${executor.cd_banco_executor} - ${executor.nm_banco_executor}` : null,
-    agencia: executor.nr_agencia_executor,
-    conta: executor.nr_conta_executor,
-    situacao_conta: executor.situacao_conta_executor || 'Conta Ativa',
+    objeto: executor.objeto_executor || '',
+    detalhamento_objeto: executor.objeto_executor || '',
+    situacao_plano_trabalho: 'Em Análise',
+    numero_plano_trabalho: '',
+    valor_custeio: parseFloat(executor.vl_custeio_executor || 0),
+    valor_investimento: parseFloat(executor.vl_investimento_executor || 0),
+    banco: executor.nome_banco_executor || null,
+    agencia: executor.numero_agencia_executor ?
+      `${executor.numero_agencia_executor}${executor.dv_agencia_executor ? '-' + executor.dv_agencia_executor : ''}` : null,
+    conta: executor.numero_conta_executor ?
+      `${executor.numero_conta_executor}${executor.dv_conta_executor ? '-' + executor.dv_conta_executor : ''}` : null,
+    situacao_conta: 'Conta Ativa',
     plano: plano,
     metas: []
   };
 }
 
-// Processar meta da API para o formato do frontend
-function processarMeta(meta) {
-  return {
-    id: meta.id_meta || meta.sequencial_meta,
-    sequencial: meta.sequencial_meta || 1,
-    nome: meta.nome_meta || '',
-    descricao: meta.desc_meta || '',
-    unidade_medida: meta.un_medida_meta || 'Unidade',
-    quantidade: meta.qt_unidade_meta || 0,
-    valor_custeio_emenda: meta.vl_custeio_emenda_especial_meta || 0,
-    valor_investimento_emenda: meta.vl_investimento_emenda_especial_meta || 0,
-    valor_custeio_proprio: meta.vl_custeio_recursos_proprios_meta || 0,
-    valor_investimento_proprio: meta.vl_investimento_recursos_proprios_meta || 0,
-    prazo_meses: meta.qt_meses_meta || 12
-  };
-}
-
 // Buscar todos os dados agregados (para página inicial)
 export async function fetchDadosAgregados() {
-  const resultado = await fetchPlanosAcao(null, 1, 1000);
-  const planos = resultado.content || resultado.data || resultado || [];
-  return processarDadosAgregados(planos);
+  // Buscar planos de todos os anos relevantes
+  const anos = [2022, 2023, 2024, 2025];
+  const todosPlanos = [];
+
+  for (const ano of anos) {
+    try {
+      const planos = await fetchPlanosAcaoES(ano);
+      if (Array.isArray(planos)) {
+        todosPlanos.push(...planos);
+      }
+    } catch (err) {
+      console.error(`Erro ao buscar planos de ${ano}:`, err);
+    }
+  }
+
+  return processarDadosAgregados(todosPlanos);
 }
 
 // Processar dados para formato do frontend
@@ -158,11 +163,12 @@ function processarDadosAgregados(planosRaw) {
 
     // Por ente
     if (!porEnte[cnpj]) {
+      const tipo = (plano.tipo_beneficiario || '').toUpperCase();
       porEnte[cnpj] = {
         id: cnpj,
         cnpj,
         nome: plano.nome_beneficiario || 'Não informado',
-        tipo: (plano.tipo_beneficiario || 'MUNICIPIO').toLowerCase() === 'estado' ? 'estado' : 'municipio',
+        tipo: tipo === 'ESTADO' || tipo.includes('ESTADO') ? 'estado' : 'municipio',
         anos: {},
         planos: []
       };
@@ -226,10 +232,10 @@ function processarDadosAgregados(planosRaw) {
 // Buscar detalhes completos de um ente (incluindo executores)
 export async function fetchEnteCompleto(ente) {
   const planosComExecutores = await Promise.all(
-    ente.planos.map(async (plano) => {
+    ente.planos.slice(0, 20).map(async (plano) => { // Limitar a 20 para performance
       try {
         const executoresRaw = await fetchExecutores(plano.id);
-        const executores = (executoresRaw.content || executoresRaw.data || executoresRaw || [])
+        const executores = (Array.isArray(executoresRaw) ? executoresRaw : [])
           .map(exec => processarExecutor(exec, plano));
         return { ...plano, executores };
       } catch (error) {
@@ -245,19 +251,31 @@ export async function fetchEnteCompleto(ente) {
 // Buscar metas de um executor
 export async function fetchMetasExecutor(idPlano, idExecutor) {
   try {
-    const metasRaw = await fetchMetas(idPlano, idExecutor);
-    const metas = (metasRaw.content || metasRaw.data || metasRaw || [])
-      .map(processarMeta);
+    const metasRaw = await fetchMetas(idPlano);
+    const metas = (Array.isArray(metasRaw) ? metasRaw : [])
+      .filter(m => m.id_executor === parseInt(idExecutor))
+      .map(meta => ({
+        id: meta.id_meta,
+        sequencial: meta.sequencial_meta || 1,
+        nome: meta.nome_meta || '',
+        descricao: meta.descricao_meta || '',
+        unidade_medida: meta.unidade_medida_meta || 'Unidade',
+        quantidade: meta.quantidade_meta || 0,
+        valor_custeio_emenda: parseFloat(meta.vl_custeio_meta || 0),
+        valor_investimento_emenda: parseFloat(meta.vl_investimento_meta || 0),
+        valor_custeio_proprio: 0,
+        valor_investimento_proprio: 0,
+        prazo_meses: meta.prazo_meta || 12
+      }));
     return metas;
   } catch (error) {
-    console.error(`Erro ao buscar metas do executor ${idExecutor}:`, error);
+    console.error(`Erro ao buscar metas:`, error);
     return [];
   }
 }
 
 export default {
-  fetchPlanosAcao,
-  fetchPlanoDetalhe,
+  fetchPlanosAcaoES,
   fetchExecutores,
   fetchMetas,
   fetchDadosAgregados,
