@@ -2,8 +2,8 @@
  * Script para gerar cache dos dados do TransfereGov ES
  * Executado via GitHub Actions diariamente às 3h da manhã
  *
- * Inclui integração com dados de Ordem Bancária (OB) para mostrar
- * valores efetivamente transferidos vs valores empenhados
+ * Versão otimizada com bulk fetching para performance
+ * Inclui valores efetivados (OBs emitidas) vs empenhados
  */
 
 const BASE_URL = 'https://api.transferegov.gestao.gov.br/transferenciasespeciais';
@@ -17,11 +17,49 @@ async function fetchJSON(url) {
   return response.json();
 }
 
+// Fetch com paginação automática
+async function fetchAllPaginated(baseUrl, pageSize = 5000) {
+  let allData = [];
+  let offset = 0;
+  let hasMore = true;
+
+  while (hasMore) {
+    const url = `${baseUrl}&limit=${pageSize}&offset=${offset}`;
+    const data = await fetchJSON(url);
+
+    if (Array.isArray(data)) {
+      allData = allData.concat(data);
+      hasMore = data.length === pageSize;
+      offset += pageSize;
+    } else {
+      hasMore = false;
+    }
+  }
+
+  return allData;
+}
+
 function extrairAreaPrincipal(texto) {
   if (!texto) return 'Outros';
   const primeiraArea = texto.split(',')[0].trim();
   const match = primeiraArea.match(/^\d+-([^/]+)/);
   return match ? match[1].trim() : 'Outros';
+}
+
+function mapearSituacaoPlanoTrabalho(situacao) {
+  if (!situacao) return 'Não Cadastrado';
+  const mapa = {
+    'APROVADO': 'Aprovado',
+    'EM_ELABORACAO': 'Em Elaboração',
+    'ENVIADO_ANALISE': 'Enviado para Análise',
+    'EM_ANALISE': 'Em Análise',
+    'CONCLUIDO_NT_TCU': 'Legado ADPF 854 STF / NT-TCU',
+    'LEGADO_ADPF': 'Legado ADPF 854 STF / NT-TCU',
+    'NAO_CADASTRADO': 'Não Cadastrado',
+    'IMPEDIDO': 'Impedido',
+    'CANCELADO': 'Cancelado'
+  };
+  return mapa[situacao.toUpperCase()] || situacao.replace(/_/g, ' ');
 }
 
 function processarPlano(plano) {
@@ -53,22 +91,6 @@ function processarPlano(plano) {
     tipo_beneficiario: plano.tipo_beneficiario_plano_acao,
     executores: []
   };
-}
-
-function mapearSituacaoPlanoTrabalho(situacao) {
-  if (!situacao) return 'Não Cadastrado';
-  const mapa = {
-    'APROVADO': 'Aprovado',
-    'EM_ELABORACAO': 'Em Elaboração',
-    'ENVIADO_ANALISE': 'Enviado para Análise',
-    'EM_ANALISE': 'Em Análise',
-    'CONCLUIDO_NT_TCU': 'Legado ADPF 854 STF / NT-TCU',
-    'LEGADO_ADPF': 'Legado ADPF 854 STF / NT-TCU',
-    'NAO_CADASTRADO': 'Não Cadastrado',
-    'IMPEDIDO': 'Impedido',
-    'CANCELADO': 'Cancelado'
-  };
-  return mapa[situacao.toUpperCase()] || situacao.replace(/_/g, ' ');
 }
 
 function processarExecutor(executor, plano, situacaoPlanoTrabalho = null) {
@@ -109,139 +131,240 @@ function processarMeta(meta) {
   };
 }
 
-async function fetchPlanosDoAno(ano) {
-  const url = `${BASE_URL}/plano_acao_especial?uf_beneficiario_plano_acao=eq.ES&ano_plano_acao=eq.${ano}`;
-  return fetchJSON(url);
-}
-
-async function fetchExecutores(idPlano) {
-  const url = `${BASE_URL}/executor_especial?id_plano_acao=eq.${idPlano}`;
-  return fetchJSON(url);
-}
-
-async function fetchPlanoTrabalho(idPlano) {
-  const url = `${BASE_URL}/plano_trabalho_especial?id_plano_acao=eq.${idPlano}`;
-  return fetchJSON(url);
-}
-
-async function fetchMetas(idExecutor) {
-  const url = `${BASE_URL}/meta_especial?id_executor=eq.${idExecutor}`;
-  return fetchJSON(url);
-}
-
-// Buscar empenhos de um plano de ação
-async function fetchEmpenhos(idPlano) {
-  const url = `${BASE_URL}/empenho_especial?id_plano_acao=eq.${idPlano}`;
-  return fetchJSON(url);
-}
-
-// Buscar documentos hábeis de um empenho
-async function fetchDocumentosHabeis(idEmpenho) {
-  const url = `${BASE_URL}/documento_habil_especial?id_empenho=eq.${idEmpenho}`;
-  return fetchJSON(url);
-}
-
-// Buscar ordens de pagamento/bancárias de um documento hábil
-async function fetchOrdensPagamento(idDh) {
-  const url = `${BASE_URL}/ordem_pagamento_ordem_bancaria_especial?id_dh=eq.${idDh}`;
-  return fetchJSON(url);
-}
-
-// Buscar valor efetivado (OBs emitidas) para um plano
-async function buscarValorEfetivado(idPlano) {
-  try {
-    // 1. Buscar empenhos do plano
-    const empenhos = await fetchEmpenhos(idPlano);
-    if (!Array.isArray(empenhos) || empenhos.length === 0) return 0;
-
-    let valorTotalOB = 0;
-
-    // 2. Para cada empenho, buscar documentos hábeis
-    for (const empenho of empenhos) {
-      try {
-        const docs = await fetchDocumentosHabeis(empenho.id_empenho);
-        if (!Array.isArray(docs) || docs.length === 0) continue;
-
-        // 3. Para cada documento hábil, buscar ordens de pagamento
-        for (const doc of docs) {
-          try {
-            const ordens = await fetchOrdensPagamento(doc.id_dh);
-            if (!Array.isArray(ordens) || ordens.length === 0) continue;
-
-            // 4. Somar valores das OBs emitidas (com número de OB preenchido)
-            for (const ordem of ordens) {
-              if (ordem.numero_ordem_bancaria) {
-                // Usar valor do documento hábil como referência
-                valorTotalOB += parseFloat(doc.valor_dh || 0);
-                break; // Cada doc.valor_dh só deve ser somado uma vez
-              }
-            }
-          } catch (err) {
-            // Ignorar erros de ordem de pagamento individual
-          }
-        }
-      } catch (err) {
-        // Ignorar erros de documento hábil individual
-      }
-    }
-
-    return valorTotalOB;
-  } catch (err) {
-    return 0;
-  }
-}
-
 async function gerarCache() {
   console.log('Iniciando geração de cache...');
   console.log(`Data/hora: ${new Date().toISOString()}`);
 
-  // 1. Buscar todos os planos de todos os anos
-  console.log('\n1. Buscando planos de ação...');
-  const todosPlanos = [];
+  // ========================================
+  // FASE 1: Buscar todos os dados em bulk
+  // ========================================
+  console.log('\n=== FASE 1: Bulk Fetching ===\n');
 
+  // 1.1 Buscar todos os planos de ação do ES
+  console.log('1.1 Buscando planos de ação...');
+  const todosPlanos = [];
   for (const ano of ANOS) {
     try {
-      const planos = await fetchPlanosDoAno(ano);
-      console.log(`   ${ano}: ${planos.length} planos encontrados`);
+      const url = `${BASE_URL}/plano_acao_especial?uf_beneficiario_plano_acao=eq.ES&ano_plano_acao=eq.${ano}`;
+      const planos = await fetchJSON(url);
+      console.log(`    ${ano}: ${planos.length} planos`);
       todosPlanos.push(...planos);
     } catch (err) {
-      console.error(`   ${ano}: ERRO - ${err.message}`);
+      console.error(`    ${ano}: ERRO - ${err.message}`);
     }
   }
+  console.log(`    Total: ${todosPlanos.length} planos\n`);
 
-  console.log(`   Total: ${todosPlanos.length} planos`);
+  // 1.2 Buscar todos os empenhos do ES
+  console.log('1.2 Buscando empenhos...');
+  const todosEmpenhos = await fetchAllPaginated(
+    `${BASE_URL}/empenho_especial?uf_beneficiario_empenho=eq.ES&select=id_empenho,id_plano_acao,valor_empenho`
+  );
+  console.log(`    Total: ${todosEmpenhos.length} empenhos\n`);
 
-  // 2. Processar planos e criar estrutura por ente
-  console.log('\n2. Processando planos...');
+  // Criar mapa de empenhos por plano
+  const empenhosPorPlano = {};
+  todosEmpenhos.forEach(e => {
+    if (!empenhosPorPlano[e.id_plano_acao]) {
+      empenhosPorPlano[e.id_plano_acao] = [];
+    }
+    empenhosPorPlano[e.id_plano_acao].push(e);
+  });
+
+  // 1.3 Buscar todos os documentos hábeis
+  console.log('1.3 Buscando documentos hábeis...');
+  const todosDocumentos = await fetchAllPaginated(
+    `${BASE_URL}/documento_habil_especial?select=id_dh,id_empenho,valor_dh`
+  );
+  console.log(`    Total: ${todosDocumentos.length} documentos hábeis\n`);
+
+  // Criar mapa de documentos por empenho
+  const documentosPorEmpenho = {};
+  todosDocumentos.forEach(d => {
+    if (!documentosPorEmpenho[d.id_empenho]) {
+      documentosPorEmpenho[d.id_empenho] = [];
+    }
+    documentosPorEmpenho[d.id_empenho].push(d);
+  });
+
+  // 1.4 Buscar todas as OBs emitidas
+  console.log('1.4 Buscando ordens bancárias (OBs)...');
+  const todasOBs = await fetchAllPaginated(
+    `${BASE_URL}/ordem_pagamento_ordem_bancaria_especial?numero_ordem_bancaria=not.is.null&select=id_dh,numero_ordem_bancaria`
+  );
+  console.log(`    Total: ${todasOBs.length} OBs emitidas\n`);
+
+  // Criar set de documentos que têm OB emitida
+  const dhsComOB = new Set(todasOBs.map(ob => ob.id_dh));
+
+  // 1.5 Buscar todos os executores e planos de trabalho
+  console.log('1.5 Buscando executores...');
+  const planoIds = todosPlanos.map(p => p.id_plano_acao).filter(Boolean);
+  const todosExecutores = [];
+  const todosPlanosTrabalho = [];
+
+  // Buscar em batches para evitar URLs muito longas
+  const batchSize = 100;
+  for (let i = 0; i < planoIds.length; i += batchSize) {
+    const batch = planoIds.slice(i, i + batchSize);
+    const idsParam = batch.join(',');
+
+    try {
+      const [execs, pts] = await Promise.all([
+        fetchJSON(`${BASE_URL}/executor_especial?id_plano_acao=in.(${idsParam})`),
+        fetchJSON(`${BASE_URL}/plano_trabalho_especial?id_plano_acao=in.(${idsParam})`)
+      ]);
+      todosExecutores.push(...execs);
+      todosPlanosTrabalho.push(...pts);
+    } catch (err) {
+      console.error(`    Erro no batch ${i}-${i + batchSize}: ${err.message}`);
+    }
+
+    process.stdout.write(`    Processando batch ${Math.min(i + batchSize, planoIds.length)}/${planoIds.length}\r`);
+  }
+  console.log(`\n    Total: ${todosExecutores.length} executores, ${todosPlanosTrabalho.length} planos de trabalho\n`);
+
+  // Criar mapas
+  const executoresPorPlano = {};
+  todosExecutores.forEach(e => {
+    if (!executoresPorPlano[e.id_plano_acao]) {
+      executoresPorPlano[e.id_plano_acao] = [];
+    }
+    executoresPorPlano[e.id_plano_acao].push(e);
+  });
+
+  const planoTrabalhoPorPlano = {};
+  todosPlanosTrabalho.forEach(pt => {
+    planoTrabalhoPorPlano[pt.id_plano_acao] = pt;
+  });
+
+  // 1.6 Buscar metas
+  console.log('1.6 Buscando metas...');
+  const executorIds = todosExecutores.map(e => e.id_executor).filter(Boolean);
+  const todasMetas = [];
+
+  for (let i = 0; i < executorIds.length; i += batchSize) {
+    const batch = executorIds.slice(i, i + batchSize);
+    const idsParam = batch.join(',');
+
+    try {
+      const metas = await fetchJSON(`${BASE_URL}/meta_especial?id_executor=in.(${idsParam})`);
+      todasMetas.push(...metas);
+    } catch (err) {
+      // Ignorar erros de metas
+    }
+
+    process.stdout.write(`    Processando batch ${Math.min(i + batchSize, executorIds.length)}/${executorIds.length}\r`);
+  }
+  console.log(`\n    Total: ${todasMetas.length} metas\n`);
+
+  const metasPorExecutor = {};
+  todasMetas.forEach(m => {
+    if (!metasPorExecutor[m.id_executor]) {
+      metasPorExecutor[m.id_executor] = [];
+    }
+    metasPorExecutor[m.id_executor].push(m);
+  });
+
+  // ========================================
+  // FASE 2: Calcular valores efetivados
+  // ========================================
+  console.log('\n=== FASE 2: Calculando valores efetivados ===\n');
+
+  // Para cada plano, calcular o valor efetivado (soma dos documentos hábeis com OB emitida)
+  const valorEfetivadoPorPlano = {};
+  let totalPlanosComOB = 0;
+
+  todosPlanos.forEach(plano => {
+    const idPlano = plano.id_plano_acao;
+    let valorEfetivado = 0;
+
+    // Buscar empenhos do plano
+    const empenhos = empenhosPorPlano[idPlano] || [];
+
+    empenhos.forEach(empenho => {
+      // Buscar documentos do empenho
+      const docs = documentosPorEmpenho[empenho.id_empenho] || [];
+
+      docs.forEach(doc => {
+        // Verificar se este documento tem OB emitida
+        if (dhsComOB.has(doc.id_dh)) {
+          valorEfetivado += parseFloat(doc.valor_dh || 0);
+        }
+      });
+    });
+
+    if (valorEfetivado > 0) {
+      totalPlanosComOB++;
+    }
+
+    valorEfetivadoPorPlano[idPlano] = valorEfetivado;
+  });
+
+  console.log(`Planos com OB emitida: ${totalPlanosComOB}/${todosPlanos.length}`);
+
+  // ========================================
+  // FASE 3: Processar e agregar dados
+  // ========================================
+  console.log('\n=== FASE 3: Processando dados ===\n');
+
   const porEnte = {};
   const porParlamentar = {};
   const porAno = {};
   const porAnoEstado = {};
   const porAnoMunicipios = {};
-  const porArea = {};
-  const porAreaPorAno = {}; // { ano: { area: valor } }
-
-  // Estruturas para valores efetivados
   const porAnoEfetivado = {};
   const porAnoEstadoEfetivado = {};
   const porAnoMunicipiosEfetivado = {};
+  const porArea = {};
+  const porAreaPorAno = {};
 
-  const planosProcessados = todosPlanos.map(processarPlano);
+  const planosProcessados = todosPlanos.map(planoRaw => {
+    const plano = processarPlano(planoRaw);
+    plano.valor_efetivado = valorEfetivadoPorPlano[planoRaw.id_plano_acao] || 0;
 
-  // Primeira passagem: estruturar dados básicos
+    // Adicionar executores
+    const execsRaw = executoresPorPlano[planoRaw.id_plano_acao] || [];
+    const pt = planoTrabalhoPorPlano[planoRaw.id_plano_acao];
+    const situacaoPlanoTrabalho = pt?.situacao_plano_trabalho || null;
+
+    plano.situacao_plano_trabalho = situacaoPlanoTrabalho;
+
+    plano.executores = execsRaw.map(execRaw => {
+      const exec = processarExecutor(execRaw, {
+        id: plano.id,
+        codigo: plano.codigo,
+        situacao: plano.situacao,
+        parlamentar: plano.parlamentar,
+        numero_emenda: plano.numero_emenda,
+        area_politica: plano.area_politica,
+        recurso_recebido: plano.recurso_recebido
+      }, situacaoPlanoTrabalho);
+
+      // Adicionar metas
+      const metasRaw = metasPorExecutor[execRaw.id_executor] || [];
+      exec.metas = metasRaw.map(processarMeta);
+
+      return exec;
+    });
+
+    return plano;
+  });
+
+  // Agregar dados
   planosProcessados.forEach(plano => {
     const cnpj = plano.cnpj_beneficiario;
     const parlamentar = plano.parlamentar;
     const ano = plano.ano;
     const area = plano.area_politica || 'Outros';
     const valor = plano.valor_total;
+    const valorEfetivado = plano.valor_efetivado;
 
     if (!cnpj) return;
 
     // Identificar se é estado ou município
     const nome = plano.nome_beneficiario || 'Não informado';
     const isEstado = nome.toUpperCase().includes('ESTADO') || nome.toUpperCase().includes('GOVERNO DO ESTADO');
-    plano._isEstado = isEstado;
 
     // Por ente
     if (!porEnte[cnpj]) {
@@ -256,6 +379,7 @@ async function gerarCache() {
       };
     }
     porEnte[cnpj].anos[ano] = (porEnte[cnpj].anos[ano] || 0) + valor;
+    porEnte[cnpj].anosEfetivados[ano] = (porEnte[cnpj].anosEfetivados[ano] || 0) + valorEfetivado;
     porEnte[cnpj].planos.push(plano);
 
     // Por parlamentar
@@ -272,21 +396,26 @@ async function gerarCache() {
         };
       }
       porParlamentar[parlamentar].total += valor;
+      porParlamentar[parlamentar].totalEfetivado += valorEfetivado;
       porParlamentar[parlamentar].planos.push(plano);
       if (!porParlamentar[parlamentar].entes.includes(plano.nome_beneficiario)) {
         porParlamentar[parlamentar].entes.push(plano.nome_beneficiario);
       }
       porParlamentar[parlamentar].anos[ano] = (porParlamentar[parlamentar].anos[ano] || 0) + valor;
+      porParlamentar[parlamentar].anosEfetivados[ano] = (porParlamentar[parlamentar].anosEfetivados[ano] || 0) + valorEfetivado;
     }
 
-    // Por ano (total)
+    // Por ano (total empenhado)
     porAno[ano] = (porAno[ano] || 0) + valor;
+    porAnoEfetivado[ano] = (porAnoEfetivado[ano] || 0) + valorEfetivado;
 
     // Por ano (estado vs municípios)
     if (isEstado) {
       porAnoEstado[ano] = (porAnoEstado[ano] || 0) + valor;
+      porAnoEstadoEfetivado[ano] = (porAnoEstadoEfetivado[ano] || 0) + valorEfetivado;
     } else {
       porAnoMunicipios[ano] = (porAnoMunicipios[ano] || 0) + valor;
+      porAnoMunicipiosEfetivado[ano] = (porAnoMunicipiosEfetivado[ano] || 0) + valorEfetivado;
     }
 
     // Por área (total)
@@ -299,124 +428,8 @@ async function gerarCache() {
     porAreaPorAno[ano][area] = (porAreaPorAno[ano][area] || 0) + valor;
   });
 
-  // 3. Buscar valores efetivados (OBs) para cada plano
-  console.log('\n3. Buscando valores efetivados (OBs)...');
-  let planosComOB = 0;
-  let totalEfetivado = 0;
-
-  for (let i = 0; i < planosProcessados.length; i++) {
-    const plano = planosProcessados[i];
-
-    try {
-      const valorEfetivado = await buscarValorEfetivado(plano.id);
-      plano.valor_efetivado = valorEfetivado;
-
-      if (valorEfetivado > 0) {
-        planosComOB++;
-        totalEfetivado += valorEfetivado;
-
-        const ano = plano.ano;
-        const parlamentar = plano.parlamentar;
-        const cnpj = plano.cnpj_beneficiario;
-
-        // Atualizar totais efetivados por ano
-        porAnoEfetivado[ano] = (porAnoEfetivado[ano] || 0) + valorEfetivado;
-
-        if (plano._isEstado) {
-          porAnoEstadoEfetivado[ano] = (porAnoEstadoEfetivado[ano] || 0) + valorEfetivado;
-        } else {
-          porAnoMunicipiosEfetivado[ano] = (porAnoMunicipiosEfetivado[ano] || 0) + valorEfetivado;
-        }
-
-        // Atualizar ente
-        if (cnpj && porEnte[cnpj]) {
-          porEnte[cnpj].anosEfetivados[ano] = (porEnte[cnpj].anosEfetivados[ano] || 0) + valorEfetivado;
-        }
-
-        // Atualizar parlamentar
-        if (parlamentar && porParlamentar[parlamentar]) {
-          porParlamentar[parlamentar].totalEfetivado += valorEfetivado;
-          porParlamentar[parlamentar].anosEfetivados[ano] =
-            (porParlamentar[parlamentar].anosEfetivados[ano] || 0) + valorEfetivado;
-        }
-      }
-    } catch (err) {
-      plano.valor_efetivado = 0;
-    }
-
-    // Log de progresso
-    if ((i + 1) % 10 === 0 || i === planosProcessados.length - 1) {
-      process.stdout.write(`   Processando OBs: ${i + 1}/${planosProcessados.length} planos (${planosComOB} com OB)\r`);
-    }
-  }
-
-  console.log(`\n   Total com OB: ${planosComOB} planos, R$ ${(totalEfetivado / 1e6).toFixed(1)} Mi efetivados`);
-
-  // 4. Buscar executores e metas para cada plano
-  console.log('\n4. Buscando executores e metas...');
-  let totalExecutores = 0;
-  let totalMetas = 0;
-
-  for (const cnpj of Object.keys(porEnte)) {
-    const ente = porEnte[cnpj];
-
-    for (let i = 0; i < ente.planos.length; i++) {
-      const plano = ente.planos[i];
-
-      try {
-        // Buscar executores e plano de trabalho
-        const [executoresRaw, planosTrabalhoRaw] = await Promise.all([
-          fetchExecutores(plano.id).catch(() => []),
-          fetchPlanoTrabalho(plano.id).catch(() => [])
-        ]);
-
-        const planoTrabalho = Array.isArray(planosTrabalhoRaw) && planosTrabalhoRaw.length > 0
-          ? planosTrabalhoRaw[0] : null;
-        const situacaoPlanoTrabalho = planoTrabalho?.situacao_plano_trabalho || null;
-
-        plano.situacao_plano_trabalho = situacaoPlanoTrabalho;
-
-        const executores = (Array.isArray(executoresRaw) ? executoresRaw : [])
-          .map(exec => processarExecutor(exec, {
-            id: plano.id,
-            codigo: plano.codigo,
-            situacao: plano.situacao,
-            parlamentar: plano.parlamentar,
-            numero_emenda: plano.numero_emenda,
-            area_politica: plano.area_politica,
-            recurso_recebido: plano.recurso_recebido
-          }, situacaoPlanoTrabalho));
-
-        // Buscar metas para cada executor
-        for (const exec of executores) {
-          try {
-            const metasRaw = await fetchMetas(exec.id);
-            exec.metas = (Array.isArray(metasRaw) ? metasRaw : []).map(processarMeta);
-            totalMetas += exec.metas.length;
-          } catch (err) {
-            exec.metas = [];
-          }
-        }
-
-        plano.executores = executores;
-        totalExecutores += executores.length;
-
-        // Limpar propriedade temporária
-        delete plano._isEstado;
-
-      } catch (err) {
-        plano.executores = [];
-        delete plano._isEstado;
-      }
-    }
-
-    process.stdout.write(`   ${ente.nome.substring(0, 30).padEnd(30)} - ${ente.planos.length} planos\r`);
-  }
-
-  console.log(`\n   Total: ${totalExecutores} executores, ${totalMetas} metas`);
-
-  // 5. Montar estrutura final
-  console.log('\n5. Montando estrutura final...');
+  // Montar estrutura final
+  console.log('Montando estrutura final...');
 
   const entes = Object.values(porEnte);
   const estado = entes.find(e => e.tipo === 'estado');
@@ -455,31 +468,31 @@ async function gerarCache() {
     totalGeralEfetivado: totalEstadoEfetivado + totalMunicipiosEfetivado
   };
 
-  // 6. Salvar arquivo
+  // Salvar arquivo
   const fs = await import('fs');
   const path = await import('path');
 
   const outputPath = path.join(process.cwd(), 'public', 'dados-es.json');
   fs.writeFileSync(outputPath, JSON.stringify(dadosCache, null, 2));
 
-  console.log(`\n6. Cache salvo em: ${outputPath}`);
-  console.log(`   Tamanho: ${(fs.statSync(outputPath).size / 1024 / 1024).toFixed(2)} MB`);
-  console.log('\nCache gerado com sucesso!');
+  console.log(`\nCache salvo em: ${outputPath}`);
+  console.log(`Tamanho: ${(fs.statSync(outputPath).size / 1024 / 1024).toFixed(2)} MB`);
 
   // Estatísticas
-  console.log('\n=== ESTATÍSTICAS ===');
+  console.log('\n=== ESTATÍSTICAS FINAIS ===');
   console.log(`Total de entes: ${entes.length}`);
   console.log(`  - Estado: ${estado ? 1 : 0}`);
   console.log(`  - Municípios: ${municipios.length}`);
   console.log(`Total de parlamentares: ${Object.keys(porParlamentar).length}`);
   console.log(`Total de planos: ${planosProcessados.length}`);
-  console.log(`  - Com OB emitida: ${planosComOB}`);
-  console.log(`Total de executores: ${totalExecutores}`);
-  console.log(`Total de metas: ${totalMetas}`);
+  console.log(`  - Com OB emitida: ${totalPlanosComOB}`);
+  console.log(`Total de executores: ${todosExecutores.length}`);
+  console.log(`Total de metas: ${todasMetas.length}`);
   console.log(`\nValores:`);
   console.log(`  - Empenhado: R$ ${(dadosCache.totalGeral / 1e6).toFixed(1)} milhões`);
   console.log(`  - Efetivado (OB): R$ ${(dadosCache.totalGeralEfetivado / 1e6).toFixed(1)} milhões`);
   console.log(`  - % Efetivado: ${((dadosCache.totalGeralEfetivado / dadosCache.totalGeral) * 100).toFixed(1)}%`);
+  console.log('\nCache gerado com sucesso!');
 }
 
 gerarCache().catch(err => {

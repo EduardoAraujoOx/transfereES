@@ -14,7 +14,7 @@ export default function App() {
   const [origem, setOrigem] = useState(null);
   const [anoFiltro, setAnoFiltro] = useState(null); // null = Todos
   const [areaFiltro, setAreaFiltro] = useState(null); // null = Todas
-  const [somenteEfetivadas, setSomenteEfetivadas] = useState(false);
+  const [somenteEfetivadas, setSomenteEfetivadas] = useState(true); // Inicia mostrando valores liberados
 
   const { data, loading, error, refetch } = useApi(fetchDadosAgregados, []);
 

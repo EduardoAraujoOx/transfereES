@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
-import { Search, TrendingUp, Building2, Users, FileText, Wallet, Landmark, Building, ArrowRight, ToggleLeft, ToggleRight } from 'lucide-react';
+import { Search, TrendingUp, Building2, Users, Wallet, Landmark, Building, ArrowRight, ToggleLeft, ToggleRight, Filter } from 'lucide-react';
 import Card from '../components/ui/Card';
-import { formatarMoeda, formatarMoedaCompacta, formatarNumero } from '../utils/formatters';
+import { formatarMoeda, formatarMoedaCompacta } from '../utils/formatters';
 
 export default function PaginaInicial({
   dados,
@@ -39,80 +39,184 @@ export default function PaginaInicial({
 
   const anos = Object.keys(porAno).sort();
 
-  // Calcular valores baseados no filtro de ano e toggle de efetivadas
+  // Calcular valores baseados no filtro de ano e toggle
+  // somenteEfetivadas = true → mostra valores liberados (OBs)
+  // somenteEfetivadas = false → mostra valores planejados (empenhados)
   const dadosFiltrados = useMemo(() => {
-    const useEfetivado = somenteEfetivadas;
+    const useLiberado = somenteEfetivadas;
 
     if (!anoFiltro) {
       return {
-        total: useEfetivado ? (totalGeralEfetivado || 0) : totalGeral,
-        totalEst: useEfetivado ? (totalEstadoEfetivado || 0) : totalEstado,
-        totalMun: useEfetivado ? (totalMunicipiosEfetivado || 0) : totalMunicipios,
+        total: useLiberado ? (totalGeralEfetivado || 0) : totalGeral,
+        totalEst: useLiberado ? (totalEstadoEfetivado || 0) : totalEstado,
+        totalMun: useLiberado ? (totalMunicipiosEfetivado || 0) : totalMunicipios,
         labelPeriodo: `${anos[0]}-${anos[anos.length - 1]}`
       };
     }
     const anoNum = parseInt(anoFiltro);
     return {
-      total: useEfetivado
+      total: useLiberado
         ? (porAnoEfetivado?.[anoNum] || 0)
         : (porAno[anoNum] || 0),
-      totalEst: useEfetivado
+      totalEst: useLiberado
         ? (porAnoEstadoEfetivado?.[anoNum] || 0)
         : (porAnoEstado?.[anoNum] || 0),
-      totalMun: useEfetivado
+      totalMun: useLiberado
         ? (porAnoMunicipiosEfetivado?.[anoNum] || 0)
         : (porAnoMunicipios?.[anoNum] || 0),
       labelPeriodo: anoFiltro.toString()
     };
   }, [anoFiltro, somenteEfetivadas, porAno, porAnoEstado, porAnoMunicipios, porAnoEfetivado, porAnoEstadoEfetivado, porAnoMunicipiosEfetivado, totalGeral, totalEstado, totalMunicipios, totalGeralEfetivado, totalEstadoEfetivado, totalMunicipiosEfetivado, anos]);
 
-  // Filtrar entes por ano selecionado e área
-  const muniF = useMemo(() => {
-    let lista = municipios;
+  // Calcular valor de um ente baseado nos filtros
+  const calcularValorEnte = (ente) => {
+    if (somenteEfetivadas) {
+      // Usar valores efetivados
+      if (anoFiltro) {
+        return ente.anosEfetivados?.[parseInt(anoFiltro)] || 0;
+      }
+      return Object.values(ente.anosEfetivados || {}).reduce((a, b) => a + b, 0);
+    } else {
+      // Usar valores empenhados
+      if (anoFiltro) {
+        return ente.anos[parseInt(anoFiltro)] || 0;
+      }
+      return Object.values(ente.anos).reduce((a, b) => a + b, 0);
+    }
+  };
+
+  // Calcular valor de um parlamentar baseado nos filtros
+  const calcularValorParlamentar = (p) => {
+    if (somenteEfetivadas) {
+      if (anoFiltro) {
+        return p.anosEfetivados?.[parseInt(anoFiltro)] || 0;
+      }
+      return p.totalEfetivado || 0;
+    } else {
+      if (anoFiltro) {
+        return p.anos[parseInt(anoFiltro)] || 0;
+      }
+      return p.total;
+    }
+  };
+
+  // Filtrar e contar planos com os filtros aplicados
+  const contarPlanosFiltrados = (planos) => {
+    let lista = planos;
     if (anoFiltro) {
-      const anoNum = parseInt(anoFiltro);
-      lista = lista.filter(m => m.anos[anoNum] && m.anos[anoNum] > 0);
+      lista = lista.filter(p => p.ano === parseInt(anoFiltro));
     }
     if (areaFiltro) {
+      lista = lista.filter(p => p.area_politica === areaFiltro);
+    }
+    if (somenteEfetivadas) {
+      lista = lista.filter(p => p.valor_efetivado > 0);
+    }
+    return lista.length;
+  };
+
+  // Filtrar entes por ano, área e valor
+  const muniF = useMemo(() => {
+    let lista = municipios;
+
+    // Filtrar por ano
+    if (anoFiltro) {
+      const anoNum = parseInt(anoFiltro);
+      lista = lista.filter(m => {
+        if (somenteEfetivadas) {
+          return (m.anosEfetivados?.[anoNum] || 0) > 0;
+        }
+        return m.anos[anoNum] && m.anos[anoNum] > 0;
+      });
+    } else if (somenteEfetivadas) {
+      // Sem filtro de ano, mas com filtro de efetivadas
+      lista = lista.filter(m => {
+        const totalEfetivado = Object.values(m.anosEfetivados || {}).reduce((a, b) => a + b, 0);
+        return totalEfetivado > 0;
+      });
+    }
+
+    // Filtrar por área
+    if (areaFiltro) {
       lista = lista.filter(m =>
-        m.planos.some(p => p.area_politica === areaFiltro && (!anoFiltro || p.ano === parseInt(anoFiltro)))
+        m.planos.some(p => {
+          const matchArea = p.area_politica === areaFiltro;
+          const matchAno = !anoFiltro || p.ano === parseInt(anoFiltro);
+          const matchEfetivado = !somenteEfetivadas || p.valor_efetivado > 0;
+          return matchArea && matchAno && matchEfetivado;
+        })
       );
     }
+
+    // Filtrar por busca
     if (buscaE) {
       lista = lista.filter(m => m.nome.toLowerCase().includes(buscaE.toLowerCase()));
     }
-    return lista;
-  }, [municipios, anoFiltro, areaFiltro, buscaE]);
 
-  // Filtrar parlamentares por ano selecionado e área
+    // Ordenar por valor
+    lista = [...lista].sort((a, b) => calcularValorEnte(b) - calcularValorEnte(a));
+
+    return lista;
+  }, [municipios, anoFiltro, areaFiltro, somenteEfetivadas, buscaE]);
+
+  // Filtrar parlamentares
   const parlF = useMemo(() => {
     let lista = parlamentares;
+
+    // Filtrar por ano
     if (anoFiltro) {
       const anoNum = parseInt(anoFiltro);
-      lista = lista.filter(p => p.anos[anoNum] && p.anos[anoNum] > 0);
+      lista = lista.filter(p => {
+        if (somenteEfetivadas) {
+          return (p.anosEfetivados?.[anoNum] || 0) > 0;
+        }
+        return p.anos[anoNum] && p.anos[anoNum] > 0;
+      });
+    } else if (somenteEfetivadas) {
+      lista = lista.filter(p => (p.totalEfetivado || 0) > 0);
     }
+
+    // Filtrar por área
     if (areaFiltro) {
       lista = lista.filter(p =>
-        p.planos.some(pl => pl.area_politica === areaFiltro && (!anoFiltro || pl.ano === parseInt(anoFiltro)))
+        p.planos.some(pl => {
+          const matchArea = pl.area_politica === areaFiltro;
+          const matchAno = !anoFiltro || pl.ano === parseInt(anoFiltro);
+          const matchEfetivado = !somenteEfetivadas || pl.valor_efetivado > 0;
+          return matchArea && matchAno && matchEfetivado;
+        })
       );
     }
+
+    // Filtrar por busca
     if (buscaP) {
       lista = lista.filter(p => p.nome.toLowerCase().includes(buscaP.toLowerCase()));
     }
-    return lista;
-  }, [parlamentares, anoFiltro, areaFiltro, buscaP]);
 
-  // Verificar se estado tem dados no ano filtrado
+    // Ordenar por valor
+    lista = [...lista].sort((a, b) => calcularValorParlamentar(b) - calcularValorParlamentar(a));
+
+    return lista;
+  }, [parlamentares, anoFiltro, areaFiltro, somenteEfetivadas, buscaP]);
+
+  // Verificar se estado tem dados com os filtros aplicados
   const estadoVisivel = useMemo(() => {
     if (!estado) return false;
-    if (!anoFiltro) return true;
-    const anoNum = parseInt(anoFiltro);
-    if (!(estado.anos[anoNum] && estado.anos[anoNum] > 0)) return false;
+
+    const valorEstado = calcularValorEnte(estado);
+    if (valorEstado <= 0) return false;
+
     if (areaFiltro) {
-      return estado.planos.some(p => p.area_politica === areaFiltro && p.ano === anoNum);
+      return estado.planos.some(p => {
+        const matchArea = p.area_politica === areaFiltro;
+        const matchAno = !anoFiltro || p.ano === parseInt(anoFiltro);
+        const matchEfetivado = !somenteEfetivadas || p.valor_efetivado > 0;
+        return matchArea && matchAno && matchEfetivado;
+      });
     }
+
     return true;
-  }, [estado, anoFiltro, areaFiltro]);
+  }, [estado, anoFiltro, areaFiltro, somenteEfetivadas]);
 
   // Dados para gráfico de áreas - atualiza com ano selecionado
   const dadosArea = useMemo(() => {
@@ -143,8 +247,18 @@ export default function PaginaInicial({
     return { ini, fim: ac, cor: cores[i]?.f || '#94a3b8' };
   });
 
-  // Calcular max para o gráfico de barras (usa porAno total para escala consistente)
+  // Calcular max para o gráfico de barras
   const maxAno = Math.max(...anos.map(a => porAno[a] || 0));
+
+  // Gerar label de filtros ativos para os boxes
+  const gerarLabelFiltros = () => {
+    const partes = [];
+    if (anoFiltro) partes.push(anoFiltro);
+    if (areaFiltro) partes.push(areaFiltro);
+    return partes.length > 0 ? partes.join(' | ') : null;
+  };
+
+  const labelFiltros = gerarLabelFiltros();
 
   return (
     <div className="space-y-6">
@@ -157,9 +271,9 @@ export default function PaginaInicial({
               <div className="flex items-start justify-between mb-1">
                 <div>
                   <p className="text-slate-400 text-sm">
-                    Total {somenteEfetivadas ? 'Efetivado' : 'Empenhado'} ({dadosFiltrados.labelPeriodo})
+                    Total {somenteEfetivadas ? 'Liberado' : 'Planejado'} ({dadosFiltrados.labelPeriodo})
                   </p>
-                  {/* Toggle para apenas efetivadas */}
+                  {/* Toggle para alternar entre liberado e planejado */}
                   <button
                     onClick={() => onEfetivadosChange && onEfetivadosChange(!somenteEfetivadas)}
                     className="flex items-center gap-1.5 mt-1 text-xs text-slate-500 hover:text-teal-400 transition-colors"
@@ -169,7 +283,7 @@ export default function PaginaInicial({
                     ) : (
                       <ToggleLeft className="w-5 h-5 text-slate-500" />
                     )}
-                    <span>{somenteEfetivadas ? 'Apenas OBs' : 'Ver OBs'}</span>
+                    <span>{somenteEfetivadas ? 'Ver Planejado' : 'Ver Liberado'}</span>
                   </button>
                 </div>
                 <div className="p-2 bg-white/10 rounded-xl">
@@ -310,14 +424,12 @@ export default function PaginaInicial({
                             className="h-full rounded-lg flex"
                             style={{ width: Math.max(pTotal, 18) + '%' }}
                           >
-                            {/* Barra do Estado (cinza) */}
                             {pEstado > 0 && (
                               <div
                                 className="h-full bg-slate-400"
                                 style={{ width: pEstado + '%' }}
                               />
                             )}
-                            {/* Barra dos Municípios (verde) */}
                             {pMunicipios > 0 && (
                               <div
                                 className="h-full"
@@ -328,7 +440,6 @@ export default function PaginaInicial({
                               />
                             )}
                           </div>
-                          {/* Valor dentro da barra */}
                           <div
                             className="absolute inset-y-0 flex items-center justify-end pr-3"
                             style={{ width: Math.max(pTotal, 18) + '%' }}
@@ -406,6 +517,27 @@ export default function PaginaInicial({
         </div>
       </div>
 
+      {/* Badge de filtros ativos */}
+      {(anoFiltro || areaFiltro || !somenteEfetivadas) && (
+        <div className="flex items-center gap-2 flex-wrap">
+          <Filter className="w-4 h-4 text-slate-400" />
+          <span className="text-sm text-slate-500">Filtros:</span>
+          {anoFiltro && (
+            <span className="px-2 py-1 bg-teal-100 text-teal-700 text-xs rounded-full font-medium">
+              {anoFiltro}
+            </span>
+          )}
+          {areaFiltro && (
+            <span className="px-2 py-1 bg-amber-100 text-amber-700 text-xs rounded-full font-medium">
+              {areaFiltro}
+            </span>
+          )}
+          <span className="px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded-full font-medium">
+            {somenteEfetivadas ? 'Liberados' : 'Planejados'}
+          </span>
+        </div>
+      )}
+
       {/* LINHA 3: 2 Boxes de Consulta */}
       <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
         <div style={{ flex: '1 1 48%', minWidth: '320px' }}>
@@ -437,44 +569,47 @@ export default function PaginaInicial({
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-slate-800 text-sm">Governo do Estado</p>
                   <p className="text-xs text-slate-500">
-                    {anoFiltro
-                      ? `${estado.planos.filter(p => p.ano === parseInt(anoFiltro)).length} planos em ${anoFiltro}`
-                      : `${estado.planos.length} planos`
-                    }
+                    {contarPlanosFiltrados(estado.planos)} plano(s)
+                    {labelFiltros && <span className="text-teal-600"> | {labelFiltros}</span>}
                   </p>
                 </div>
                 <p className="font-bold text-slate-800 text-sm">
-                  {formatarMoedaCompacta(anoFiltro ? (estado.anos[parseInt(anoFiltro)] || 0) : totalEstado)}
+                  {formatarMoedaCompacta(calcularValorEnte(estado))}
                 </p>
                 <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-teal-500 group-hover:translate-x-1 transition-all" />
               </div>
             )}
             <div className="flex-1 overflow-y-auto max-h-64">
-              {muniF.map((m, i) => {
-                const t = anoFiltro
-                  ? (m.anos[parseInt(anoFiltro)] || 0)
-                  : Object.values(m.anos).reduce((a, b) => a + b, 0);
-                const numPlanos = anoFiltro
-                  ? m.planos.filter(p => p.ano === parseInt(anoFiltro)).length
-                  : m.planos.length;
-                return (
-                  <div
-                    key={m.id}
-                    onClick={() => onEnte(m)}
-                    className={'p-4 cursor-pointer hover:bg-teal-50/50 flex items-center gap-3 group ' + (i < muniF.length - 1 ? 'border-b border-slate-50' : '')}
-                  >
-                    <div className="p-2.5 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-xl shadow-sm">
-                      <Building className="w-4 h-4 text-white" />
+              {muniF.length === 0 ? (
+                <div className="p-8 text-center text-slate-500 text-sm">
+                  Nenhum município encontrado com os filtros selecionados
+                </div>
+              ) : (
+                muniF.map((m, i) => {
+                  const valor = calcularValorEnte(m);
+                  const numPlanos = contarPlanosFiltrados(m.planos);
+                  return (
+                    <div
+                      key={m.id}
+                      onClick={() => onEnte(m)}
+                      className={'p-4 cursor-pointer hover:bg-teal-50/50 flex items-center gap-3 group ' + (i < muniF.length - 1 ? 'border-b border-slate-50' : '')}
+                    >
+                      <div className="p-2.5 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-xl shadow-sm">
+                        <Building className="w-4 h-4 text-white" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-slate-800 text-sm">{m.nome}</p>
+                        <p className="text-xs text-slate-500">
+                          {numPlanos} plano(s)
+                          {labelFiltros && <span className="text-teal-600"> | {labelFiltros}</span>}
+                        </p>
+                      </div>
+                      <p className="font-bold text-slate-800 text-sm">{formatarMoedaCompacta(valor)}</p>
+                      <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-teal-500 group-hover:translate-x-1 transition-all" />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-slate-800 text-sm">{m.nome}</p>
-                      <p className="text-xs text-slate-500">{numPlanos} planos</p>
-                    </div>
-                    <p className="font-bold text-slate-800 text-sm">{formatarMoedaCompacta(t)}</p>
-                    <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-teal-500 group-hover:translate-x-1 transition-all" />
-                  </div>
-                );
-              })}
+                  );
+                })
+              )}
             </div>
           </Card>
         </div>
@@ -497,34 +632,46 @@ export default function PaginaInicial({
               </div>
             </div>
             <div className="flex-1 overflow-y-auto max-h-80">
-              {parlF.map((p, i) => {
-                const valorParl = anoFiltro
-                  ? (p.anos[parseInt(anoFiltro)] || 0)
-                  : p.total;
-                const numEntes = anoFiltro
-                  ? new Set(p.planos.filter(pl => pl.ano === parseInt(anoFiltro)).map(pl => pl.nome_beneficiario)).size
-                  : (p.entes?.size || p.entes?.length || 0);
-                const numPlanos = anoFiltro
-                  ? p.planos.filter(pl => pl.ano === parseInt(anoFiltro)).length
-                  : p.planos.length;
-                return (
-                  <div
-                    key={p.nome}
-                    onClick={() => onParlamentar(p)}
-                    className={'p-4 cursor-pointer hover:bg-indigo-50/50 flex items-center gap-3 group ' + (i < parlF.length - 1 ? 'border-b border-slate-50' : '')}
-                  >
-                    <div className="p-2.5 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-sm">
-                      <Users className="w-4 h-4 text-white" />
+              {parlF.length === 0 ? (
+                <div className="p-8 text-center text-slate-500 text-sm">
+                  Nenhum parlamentar encontrado com os filtros selecionados
+                </div>
+              ) : (
+                parlF.map((p, i) => {
+                  const valor = calcularValorParlamentar(p);
+                  const numPlanos = contarPlanosFiltrados(p.planos);
+                  const numEntes = new Set(
+                    p.planos
+                      .filter(pl => {
+                        const matchAno = !anoFiltro || pl.ano === parseInt(anoFiltro);
+                        const matchArea = !areaFiltro || pl.area_politica === areaFiltro;
+                        const matchEfetivado = !somenteEfetivadas || pl.valor_efetivado > 0;
+                        return matchAno && matchArea && matchEfetivado;
+                      })
+                      .map(pl => pl.nome_beneficiario)
+                  ).size;
+                  return (
+                    <div
+                      key={p.nome}
+                      onClick={() => onParlamentar(p)}
+                      className={'p-4 cursor-pointer hover:bg-indigo-50/50 flex items-center gap-3 group ' + (i < parlF.length - 1 ? 'border-b border-slate-50' : '')}
+                    >
+                      <div className="p-2.5 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-sm">
+                        <Users className="w-4 h-4 text-white" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-slate-800 text-sm">{p.nome}</p>
+                        <p className="text-xs text-slate-500">
+                          {numPlanos} plano(s) - {numEntes} ente(s)
+                          {labelFiltros && <span className="text-indigo-600"> | {labelFiltros}</span>}
+                        </p>
+                      </div>
+                      <p className="font-bold text-slate-800 text-sm">{formatarMoedaCompacta(valor)}</p>
+                      <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-indigo-500 group-hover:translate-x-1 transition-all" />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-slate-800 text-sm">{p.nome}</p>
-                      <p className="text-xs text-slate-500">{numPlanos} plano(s) - {numEntes} ente(s)</p>
-                    </div>
-                    <p className="font-bold text-slate-800 text-sm">{formatarMoedaCompacta(valorParl)}</p>
-                    <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-indigo-500 group-hover:translate-x-1 transition-all" />
-                  </div>
-                );
-              })}
+                  );
+                })
+              )}
             </div>
           </Card>
         </div>
