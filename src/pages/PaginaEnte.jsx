@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { TrendingUp, Building2, Landmark, Building, ArrowRight } from 'lucide-react';
+import { TrendingUp, Building2, Landmark, Building, ArrowRight, ToggleLeft, ToggleRight } from 'lucide-react';
 import Card from '../components/ui/Card';
 import { BtnVoltar, Loading } from '../components/ui';
 import { formatarMoeda, formatarMoedaCompacta } from '../utils/formatters';
@@ -11,6 +11,7 @@ export default function PaginaEnte({ ente, anoInicial, areaInicial, somenteEfeti
   const [areaFiltro, setAreaFiltro] = useState(areaInicial || null);
   const [enteCompleto, setEnteCompleto] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [mostrarEfetivadas, setMostrarEfetivadas] = useState(somenteEfetivadas);
 
   useEffect(() => {
     async function carregarExecutores() {
@@ -28,10 +29,29 @@ export default function PaginaEnte({ ente, anoInicial, areaInicial, somenteEfeti
   }, [ente]);
 
   const anosD = Object.keys(ente.anos).sort();
-  const total = somenteEfetivadas
-    ? Object.values(ente.anosEfetivados || {}).reduce((a, b) => a + b, 0)
-    : Object.values(ente.anos).reduce((a, b) => a + b, 0);
-  const maxAno = Math.max(...Object.values(ente.anos));
+
+  // Calcular total baseado no toggle e filtros de ano
+  const total = useMemo(() => {
+    if (ano) {
+      // Se tem filtro de ano, calcular apenas para aquele ano
+      if (mostrarEfetivadas) {
+        return ente.anosEfetivados?.[ano] || 0;
+      }
+      return ente.anos?.[ano] || 0;
+    }
+    // Sem filtro de ano, soma todos
+    if (mostrarEfetivadas) {
+      return Object.values(ente.anosEfetivados || {}).reduce((a, b) => a + b, 0);
+    }
+    return Object.values(ente.anos).reduce((a, b) => a + b, 0);
+  }, [ente, ano, mostrarEfetivadas]);
+
+  const maxAno = useMemo(() => {
+    if (mostrarEfetivadas) {
+      return Math.max(...Object.values(ente.anosEfetivados || {}), 1);
+    }
+    return Math.max(...Object.values(ente.anos), 1);
+  }, [ente, mostrarEfetivadas]);
 
   // Calcular distribuição por área
   const dadosArea = useMemo(() => {
@@ -40,11 +60,11 @@ export default function PaginaEnte({ ente, anoInicial, areaInicial, somenteEfeti
     planos.forEach(p => {
       if (ano && p.ano !== parseInt(ano)) return;
       const area = p.area_politica || 'Outros';
-      const valor = somenteEfetivadas ? (p.valor_efetivado || 0) : p.valor_total;
+      const valor = mostrarEfetivadas ? (p.valor_efetivado || 0) : p.valor_total;
       areaMap[area] = (areaMap[area] || 0) + valor;
     });
     return Object.entries(areaMap).sort((a, b) => b[1] - a[1]).slice(0, 5);
-  }, [ente, enteCompleto, ano, somenteEfetivadas]);
+  }, [ente, enteCompleto, ano, mostrarEfetivadas]);
 
   const tFins = dadosArea.reduce((a, [, v]) => a + v, 0);
 
@@ -75,13 +95,26 @@ export default function PaginaEnte({ ente, anoInicial, areaInicial, somenteEfeti
     return lista;
   }, [ente, enteCompleto, ano, areaFiltro]);
 
-  const execs = planosF.flatMap(p =>
-    (p.executores || []).map(e => ({
-      ...e,
-      plano: p,
-      vT: (e.valor_custeio || 0) + (e.valor_investimento || 0)
-    }))
-  ).sort((a, b) => b.vT - a.vT);
+  const execs = useMemo(() => {
+    let lista = planosF.flatMap(p =>
+      (p.executores || []).map(e => {
+        const valorPlanejado = (e.valor_custeio || 0) + (e.valor_investimento || 0);
+        const valorEfetivado = e.valor_efetivado || 0;
+        return {
+          ...e,
+          plano: p,
+          vT: mostrarEfetivadas ? valorEfetivado : valorPlanejado,
+          valorPlanejado,
+          valorEfetivado
+        };
+      })
+    );
+    // Quando mostrarEfetivadas, filtrar apenas executores com valor > 0
+    if (mostrarEfetivadas) {
+      lista = lista.filter(e => e.vT > 0);
+    }
+    return lista.sort((a, b) => b.vT - a.vT);
+  }, [planosF, mostrarEfetivadas]);
 
   return (
     <div className="space-y-5">
@@ -102,7 +135,14 @@ export default function PaginaEnte({ ente, anoInicial, areaInicial, somenteEfeti
           </div>
           <div className="text-right">
             <p className="text-3xl font-bold text-slate-800">{formatarMoeda(total)}</p>
-            <p className="text-slate-500">Total {somenteEfetivadas ? 'efetivado' : 'recebido'}</p>
+            <p className="text-slate-500 mb-2">Total {mostrarEfetivadas ? 'Liberado' : 'Planejado'}</p>
+            <button
+              onClick={() => setMostrarEfetivadas(!mostrarEfetivadas)}
+              className="flex items-center gap-1.5 text-xs text-teal-600 hover:text-teal-700 font-medium transition-colors ml-auto"
+            >
+              {mostrarEfetivadas ? <ToggleRight className="w-5 h-5" /> : <ToggleLeft className="w-5 h-5" />}
+              <span>{mostrarEfetivadas ? 'Ver Planejado' : 'Ver Liberado'}</span>
+            </button>
           </div>
         </div>
       </Card>
@@ -137,8 +177,8 @@ export default function PaginaEnte({ ente, anoInicial, areaInicial, somenteEfeti
             </div>
             <div className="space-y-3">
               {anosD.map(a => {
-                const v = ente.anos[a];
-                const p = (v / maxAno) * 100;
+                const v = mostrarEfetivadas ? (ente.anosEfetivados?.[a] || 0) : ente.anos[a];
+                const p = maxAno > 0 ? (v / maxAno) * 100 : 0;
                 const sel = !ano || ano === a;
                 return (
                   <div key={a} className="group">
@@ -290,7 +330,7 @@ export default function PaginaEnte({ ente, anoInicial, areaInicial, somenteEfeti
                     </div>
                     <div className="text-right flex-shrink-0">
                       <p className="text-lg font-bold text-slate-800">{formatarMoedaCompacta(ex.vT)}</p>
-                      <p className="text-xs text-slate-500">Valor do projeto</p>
+                      <p className="text-xs text-slate-500">{mostrarEfetivadas ? 'Valor liberado' : 'Valor planejado'}</p>
                     </div>
                     <ArrowRight className="w-5 h-5 text-slate-300 group-hover:text-teal-500 group-hover:translate-x-1 transition-all mt-2 flex-shrink-0" />
                   </div>

@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react';
-import { Building2, Target, Landmark, CreditCard, BadgeCheck, Hourglass } from 'lucide-react';
+import { Building2, Target, Landmark, CreditCard, BadgeCheck, Hourglass, ToggleLeft, ToggleRight } from 'lucide-react';
 import Card from '../components/ui/Card';
 import { BtnVoltar, Linha, Secao, LinkTransfereGov, Loading } from '../components/ui';
 import { formatarMoeda, formatarMoedaCompacta, formatarNumero } from '../utils/formatters';
 import { getSituacaoPlano, getSituacaoTrabalho, getStatusRecurso, getSituacaoConta } from '../utils/helpers';
 import { fetchMetasExecutor } from '../services/api';
 
-export default function PaginaExecutor({ exec, ente, onVoltar }) {
+export default function PaginaExecutor({ exec, ente, somenteEfetivadas, onVoltar }) {
   const [metas, setMetas] = useState(exec.metas || []);
   const [loadingMetas, setLoadingMetas] = useState(false);
+  const [mostrarEfetivadas, setMostrarEfetivadas] = useState(somenteEfetivadas);
 
   useEffect(() => {
     async function carregarMetas() {
@@ -29,7 +30,9 @@ export default function PaginaExecutor({ exec, ente, onVoltar }) {
   const sitP = getSituacaoPlano(exec.plano.situacao);
   const rec = getStatusRecurso(exec.plano.recurso_recebido);
   const RecIc = rec.icone === 'BadgeCheck' ? BadgeCheck : Hourglass;
-  const vT = (exec.valor_custeio || 0) + (exec.valor_investimento || 0);
+  const valorPlanejado = (exec.valor_custeio || 0) + (exec.valor_investimento || 0);
+  const valorLiberado = exec.valor_efetivado || 0;
+  const vT = mostrarEfetivadas ? valorLiberado : valorPlanejado;
 
   return (
     <div className="space-y-5">
@@ -91,12 +94,29 @@ export default function PaginaExecutor({ exec, ente, onVoltar }) {
             )}
           </div>
           
+          {/* Toggle Liberado/Planejado */}
+          <div className="flex items-center justify-end mb-3">
+            <button
+              onClick={() => setMostrarEfetivadas(!mostrarEfetivadas)}
+              className="flex items-center gap-1.5 text-xs text-teal-600 hover:text-teal-700 font-medium transition-colors"
+            >
+              {mostrarEfetivadas ? <ToggleRight className="w-5 h-5" /> : <ToggleLeft className="w-5 h-5" />}
+              <span>{mostrarEfetivadas ? 'Ver Planejado' : 'Ver Liberado'}</span>
+            </button>
+          </div>
+
           {/* Valores discriminados */}
-          <div className="grid grid-cols-3 gap-3 mb-4">
+          <div className="grid grid-cols-2 gap-3 mb-4">
             <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
-              <p className="text-xs text-emerald-600">Valor Total</p>
-              <p className="text-xl font-bold text-emerald-700">{formatarMoedaCompacta(vT)}</p>
+              <p className="text-xs text-emerald-600">Valor Planejado</p>
+              <p className={'text-xl font-bold ' + (!mostrarEfetivadas ? 'text-emerald-700' : 'text-emerald-600/60')}>{formatarMoedaCompacta(valorPlanejado)}</p>
             </div>
+            <div className="bg-teal-50 rounded-xl p-4 border border-teal-100">
+              <p className="text-xs text-teal-600">Valor Liberado</p>
+              <p className={'text-xl font-bold ' + (mostrarEfetivadas ? 'text-teal-700' : 'text-teal-600/60')}>{formatarMoedaCompacta(valorLiberado)}</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3 mb-4">
             <div className="bg-slate-50 rounded-xl p-4">
               <p className="text-xs text-slate-500">Custeio</p>
               <p className="text-xl font-bold text-slate-700">{formatarMoedaCompacta(exec.valor_custeio)}</p>

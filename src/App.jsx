@@ -115,6 +115,7 @@ export default function App() {
               <PaginaExecutor
                 exec={exec}
                 ente={ente || (data.municipios.find(m => m.cnpj === exec.plano?.cnpj_beneficiario) || data.estado)}
+                somenteEfetivadas={somenteEfetivadas}
                 onVoltar={voltarExec}
               />
             )}

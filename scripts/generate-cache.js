@@ -386,6 +386,12 @@ async function gerarCache() {
         recurso_recebido: plano.recurso_recebido
       }, situacaoPlanoTrabalho);
 
+      // Calcular valor_efetivado proporcional para o executor
+      const valorTotalExecutor = (exec.valor_custeio || 0) + (exec.valor_investimento || 0);
+      const valorTotalPlano = plano.valor_total || 0;
+      const proporcao = valorTotalPlano > 0 ? valorTotalExecutor / valorTotalPlano : 0;
+      exec.valor_efetivado = plano.valor_efetivado * proporcao;
+
       // Adicionar metas
       const metasRaw = metasPorExecutor[execRaw.id_executor] || [];
       exec.metas = metasRaw.map(processarMeta);
