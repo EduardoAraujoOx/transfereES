@@ -1,0 +1,45 @@
+name: Update Data Cache
+
+on:
+  schedule:
+    # Roda às 6h UTC (3h horário de Brasília)
+    - cron: '0 6 * * *'
+  workflow_dispatch:  # Permite execução manual
+
+permissions:
+  contents: write
+
+jobs:
+  update-cache:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generate cache
+        run: node scripts/generate-cache.js
+
+      - name: Check for changes
+        id: git-check
+        run: |
+          git diff --quiet public/dados-es.json || echo "changed=true" >> $GITHUB_OUTPUT
+
+      - name: Commit and push if changed
+        if: steps.git-check.outputs.changed == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add public/dados-es.json
+          git commit -m "chore: atualiza cache de dados ES - $(date +'%Y-%m-%d %H:%M')"
+          git push
+
+      - name: Trigger deploy
+        if: steps.git-check.outputs.changed == 'true'
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          event-type: cache-updated

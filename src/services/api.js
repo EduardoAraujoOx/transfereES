@@ -1,5 +1,8 @@
-// API TransfereGov - URL CORRETA
+// API TransfereGov - com suporte a cache local
 const BASE_URL = 'https://api.transferegov.gestao.gov.br/transferenciasespeciais';
+
+// URL do cache local (gerado pela GitHub Action)
+const CACHE_URL = import.meta.env.BASE_URL + 'dados-es.json';
 
 // Proxies CORS para fallback automático
 const corsProxies = [
@@ -8,7 +11,7 @@ const corsProxies = [
   { name: 'direct', url: '' }
 ];
 
-// Cache simples
+// Cache simples em memória
 const cache = new Map();
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutos
 
@@ -51,6 +54,34 @@ async function fetchWithAutoProxy(url) {
   throw lastError || new Error('Todos os proxies falharam');
 }
 
+// Buscar dados do cache local (prioritário para carregamento inicial rápido)
+async function fetchDadosDoCache() {
+  try {
+    const response = await fetch(CACHE_URL);
+    if (!response.ok) throw new Error('Cache não disponível');
+    const dados = await response.json();
+
+    // Verificar se o cache tem dados válidos
+    if (!dados.estado && (!dados.municipios || dados.municipios.length === 0)) {
+      throw new Error('Cache vazio');
+    }
+
+    // Converter entes de volta para Set (foi serializado como array)
+    if (dados.parlamentares) {
+      dados.parlamentares = dados.parlamentares.map(p => ({
+        ...p,
+        entes: new Set(p.entes || [])
+      }));
+    }
+
+    console.log(`Dados carregados do cache (atualizado em: ${dados.atualizadoEm || 'data desconhecida'})`);
+    return dados;
+  } catch (err) {
+    console.log('Cache não disponível, buscando da API...', err.message);
+    return null;
+  }
+}
+
 // Buscar todos os planos de ação do ES
 export async function fetchPlanosAcaoES(ano = null) {
   let url = `${BASE_URL}/plano_acao_especial?uf_beneficiario_plano_acao=eq.ES`;
@@ -77,17 +108,11 @@ export async function fetchMetasPorExecutor(idExecutor) {
 }
 
 // Extrair área principal do campo codigo_descricao_areas_politicas_publicas_plano_acao
-// Ex: "15-Urbanismo / 451-Infraestrutura Urbana" -> "Urbanismo"
 function extrairAreaPrincipal(texto) {
   if (!texto) return 'Outros';
-  // Pega a primeira área (antes da primeira vírgula se houver múltiplas)
   const primeiraArea = texto.split(',')[0].trim();
-  // Extrai o nome da área (ex: "15-Urbanismo / 451-..." -> "Urbanismo")
   const match = primeiraArea.match(/^\d+-([^/]+)/);
-  if (match) {
-    return match[1].trim();
-  }
-  return 'Outros';
+  return match ? match[1].trim() : 'Outros';
 }
 
 // Mapear situação do plano de trabalho para texto amigável
@@ -178,31 +203,13 @@ function processarMeta(meta) {
   };
 }
 
-// Buscar todos os dados agregados (para página inicial)
-export async function fetchDadosAgregados() {
-  // Buscar planos de todos os anos relevantes (incluindo 2021)
-  const anos = [2021, 2022, 2023, 2024, 2025];
-  const todosPlanos = [];
-
-  for (const ano of anos) {
-    try {
-      const planos = await fetchPlanosAcaoES(ano);
-      if (Array.isArray(planos)) {
-        todosPlanos.push(...planos);
-      }
-    } catch (err) {
-      console.error(`Erro ao buscar planos de ${ano}:`, err);
-    }
-  }
-
-  return processarDadosAgregados(todosPlanos);
-}
-
-// Processar dados para formato do frontend
+// Processar dados da API para formato do frontend
 function processarDadosAgregados(planosRaw) {
   const porEnte = {};
   const porParlamentar = {};
   const porAno = {};
+  const porAnoEstado = {};
+  const porAnoMunicipios = {};
   const porArea = {};
 
   const planos = planosRaw.map(processarPlano);
@@ -216,11 +223,11 @@ function processarDadosAgregados(planosRaw) {
 
     if (!cnpj) return;
 
+    const nome = plano.nome_beneficiario || 'Não informado';
+    const isEstado = nome.toUpperCase().includes('ESTADO') || nome.toUpperCase().includes('GOVERNO DO ESTADO');
+
     // Por ente
     if (!porEnte[cnpj]) {
-      const nome = plano.nome_beneficiario || 'Não informado';
-      const isEstado = nome.toUpperCase().includes('ESTADO') ||
-                       nome.toUpperCase().includes('GOVERNO DO ESTADO');
       porEnte[cnpj] = {
         id: cnpj,
         cnpj,
@@ -250,8 +257,15 @@ function processarDadosAgregados(planosRaw) {
       porParlamentar[parlamentar].anos[ano] = (porParlamentar[parlamentar].anos[ano] || 0) + valor;
     }
 
-    // Por ano
+    // Por ano (total)
     porAno[ano] = (porAno[ano] || 0) + valor;
+
+    // Por ano (estado vs municípios)
+    if (isEstado) {
+      porAnoEstado[ano] = (porAnoEstado[ano] || 0) + valor;
+    } else {
+      porAnoMunicipios[ano] = (porAnoMunicipios[ano] || 0) + valor;
+    }
 
     // Por área
     porArea[area] = (porArea[area] || 0) + valor;
@@ -279,6 +293,8 @@ function processarDadosAgregados(planosRaw) {
       .map(p => ({ ...p, entes: p.entes }))
       .sort((a, b) => b.total - a.total),
     porAno,
+    porAnoEstado: porAnoEstado,
+    porAnoMunicipios: porAnoMunicipios,
     porArea,
     totalEstado,
     totalMunicipios,
@@ -286,21 +302,55 @@ function processarDadosAgregados(planosRaw) {
   };
 }
 
-// Buscar detalhes completos de um ente (incluindo executores e situação do plano de trabalho)
+// Buscar todos os dados agregados (para página inicial)
+// Primeiro tenta o cache local, depois faz fallback para a API
+export async function fetchDadosAgregados() {
+  // Tentar carregar do cache local primeiro (muito mais rápido)
+  const dadosCache = await fetchDadosDoCache();
+  if (dadosCache) {
+    return dadosCache;
+  }
+
+  // Fallback: buscar da API (mais lento)
+  console.log('Carregando dados da API...');
+  const anos = [2021, 2022, 2023, 2024, 2025];
+  const todosPlanos = [];
+
+  for (const ano of anos) {
+    try {
+      const planos = await fetchPlanosAcaoES(ano);
+      if (Array.isArray(planos)) {
+        todosPlanos.push(...planos);
+      }
+    } catch (err) {
+      console.error(`Erro ao buscar planos de ${ano}:`, err);
+    }
+  }
+
+  return processarDadosAgregados(todosPlanos);
+}
+
+// Buscar detalhes completos de um ente
+// Se os dados vieram do cache, os executores já estão incluídos
 export async function fetchEnteCompleto(ente) {
+  // Verificar se os planos já têm executores (vieram do cache)
+  const primeiroPlano = ente.planos?.[0];
+  if (primeiroPlano?.executores && primeiroPlano.executores.length > 0) {
+    console.log('Usando dados do cache para executores');
+    return ente;
+  }
+
+  // Buscar executores da API
   const planosComExecutores = await Promise.all(
     ente.planos.map(async (plano) => {
       try {
-        // Buscar executores e plano de trabalho em paralelo
         const [executoresRaw, planosTrabalhoRaw] = await Promise.all([
           fetchExecutores(plano.id),
           fetchPlanoTrabalho(plano.id).catch(() => [])
         ]);
 
-        // Pegar a situação do plano de trabalho (pode haver múltiplos, pegamos o primeiro)
         const planoTrabalho = Array.isArray(planosTrabalhoRaw) && planosTrabalhoRaw.length > 0
-          ? planosTrabalhoRaw[0]
-          : null;
+          ? planosTrabalhoRaw[0] : null;
         const situacaoPlanoTrabalho = planoTrabalho?.situacao_plano_trabalho || null;
 
         const executores = (Array.isArray(executoresRaw) ? executoresRaw : [])
@@ -321,8 +371,7 @@ export async function fetchEnteCompleto(ente) {
 export async function fetchMetasExecutor(idPlano, idExecutor) {
   try {
     const metasRaw = await fetchMetasPorExecutor(idExecutor);
-    const metas = (Array.isArray(metasRaw) ? metasRaw : [])
-      .map(processarMeta);
+    const metas = (Array.isArray(metasRaw) ? metasRaw : []).map(processarMeta);
     return metas;
   } catch (error) {
     console.error(`Erro ao buscar metas do executor ${idExecutor}:`, error);

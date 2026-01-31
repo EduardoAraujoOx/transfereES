@@ -6,8 +6,8 @@ import { formatarMoeda, formatarMoedaCompacta } from '../utils/formatters';
 import { getSituacaoTrabalho } from '../utils/helpers';
 import { fetchEnteCompleto } from '../services/api';
 
-export default function PaginaEnte({ ente, onVoltar, onExec }) {
-  const [ano, setAno] = useState(null);
+export default function PaginaEnte({ ente, anoInicial, onVoltar, onExec }) {
+  const [ano, setAno] = useState(anoInicial || null);
   const [enteCompleto, setEnteCompleto] = useState(null);
   const [loading, setLoading] = useState(true);
 

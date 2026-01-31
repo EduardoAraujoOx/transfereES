@@ -6,8 +6,8 @@ import { formatarMoeda, formatarMoedaCompacta } from '../utils/formatters';
 import { getSituacaoTrabalho } from '../utils/helpers';
 import { fetchEnteCompleto } from '../services/api';
 
-export default function PaginaParlamentar({ parl, onVoltar, onExec }) {
-  const [ano, setAno] = useState(null);
+export default function PaginaParlamentar({ parl, anoInicial, onVoltar, onExec }) {
+  const [ano, setAno] = useState(anoInicial || null);
   const [enteExp, setEnteExp] = useState(null);
   const [entesComExecutores, setEntesComExecutores] = useState({});
   const [loadingEnte, setLoadingEnte] = useState(null);

@@ -12,19 +12,22 @@ export default function App() {
   const [exec, setExec] = useState(null);
   const [ajuda, setAjuda] = useState(false);
   const [origem, setOrigem] = useState(null);
+  const [anoFiltro, setAnoFiltro] = useState(null); // null = Todos
 
   const { data, loading, error, refetch } = useApi(fetchDadosAgregados, []);
 
-  const irEnte = (e) => {
+  const irEnte = (e, ano = null) => {
     setEnte(e);
     setOrigem('inicial');
+    if (ano !== null) setAnoFiltro(ano);
     setPag('ente');
     window.scrollTo(0, 0);
   };
 
-  const irParl = (p) => {
+  const irParl = (p, ano = null) => {
     setParl(p);
     setOrigem('inicial');
+    if (ano !== null) setAnoFiltro(ano);
     setPag('parl');
     window.scrollTo(0, 0);
   };
@@ -76,13 +79,16 @@ export default function App() {
             {pag === 'inicial' && (
               <PaginaInicial
                 dados={data}
-                onEnte={irEnte}
-                onParlamentar={irParl}
+                anoFiltro={anoFiltro}
+                onAnoChange={setAnoFiltro}
+                onEnte={(e) => irEnte(e, anoFiltro)}
+                onParlamentar={(p) => irParl(p, anoFiltro)}
               />
             )}
             {pag === 'ente' && ente && (
               <PaginaEnte
                 ente={ente}
+                anoInicial={anoFiltro}
                 onVoltar={voltarIni}
                 onExec={irExec}
               />
@@ -90,6 +96,7 @@ export default function App() {
             {pag === 'parl' && parl && (
               <PaginaParlamentar
                 parl={parl}
+                anoInicial={anoFiltro}
                 onVoltar={voltarIni}
                 onExec={(e) => { setOrigem('parl'); irExec(e); }}
               />
