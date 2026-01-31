@@ -1,70 +1,132 @@
 import { useState, useMemo } from 'react';
-import { Search, TrendingUp, Building2, Users, FileText, Wallet, Landmark, Building, ArrowRight } from 'lucide-react';
+import { Search, TrendingUp, Building2, Users, FileText, Wallet, Landmark, Building, ArrowRight, ToggleLeft, ToggleRight } from 'lucide-react';
 import Card from '../components/ui/Card';
 import { formatarMoeda, formatarMoedaCompacta, formatarNumero } from '../utils/formatters';
 
-export default function PaginaInicial({ dados, anoFiltro, onAnoChange, onEnte, onParlamentar }) {
+export default function PaginaInicial({
+  dados,
+  anoFiltro,
+  onAnoChange,
+  areaFiltro,
+  onAreaChange,
+  somenteEfetivadas,
+  onEfetivadosChange,
+  onEnte,
+  onParlamentar
+}) {
   const [buscaE, setBuscaE] = useState('');
   const [buscaP, setBuscaP] = useState('');
 
-  const { estado, municipios, parlamentares, porAno, porAnoEstado, porAnoMunicipios, porArea, totalEstado, totalMunicipios, totalGeral } = dados;
+  const {
+    estado,
+    municipios,
+    parlamentares,
+    porAno,
+    porAnoEstado,
+    porAnoMunicipios,
+    porAnoEfetivado,
+    porAnoEstadoEfetivado,
+    porAnoMunicipiosEfetivado,
+    porArea,
+    porAreaPorAno,
+    totalEstado,
+    totalMunicipios,
+    totalGeral,
+    totalEstadoEfetivado,
+    totalMunicipiosEfetivado,
+    totalGeralEfetivado
+  } = dados;
 
   const anos = Object.keys(porAno).sort();
 
-  // Calcular valores baseados no filtro de ano
+  // Calcular valores baseados no filtro de ano e toggle de efetivadas
   const dadosFiltrados = useMemo(() => {
+    const useEfetivado = somenteEfetivadas;
+
     if (!anoFiltro) {
       return {
-        total: totalGeral,
-        totalEst: totalEstado,
-        totalMun: totalMunicipios,
+        total: useEfetivado ? (totalGeralEfetivado || 0) : totalGeral,
+        totalEst: useEfetivado ? (totalEstadoEfetivado || 0) : totalEstado,
+        totalMun: useEfetivado ? (totalMunicipiosEfetivado || 0) : totalMunicipios,
         labelPeriodo: `${anos[0]}-${anos[anos.length - 1]}`
       };
     }
     const anoNum = parseInt(anoFiltro);
     return {
-      total: porAno[anoNum] || 0,
-      totalEst: (porAnoEstado?.[anoNum] || 0),
-      totalMun: (porAnoMunicipios?.[anoNum] || 0),
+      total: useEfetivado
+        ? (porAnoEfetivado?.[anoNum] || 0)
+        : (porAno[anoNum] || 0),
+      totalEst: useEfetivado
+        ? (porAnoEstadoEfetivado?.[anoNum] || 0)
+        : (porAnoEstado?.[anoNum] || 0),
+      totalMun: useEfetivado
+        ? (porAnoMunicipiosEfetivado?.[anoNum] || 0)
+        : (porAnoMunicipios?.[anoNum] || 0),
       labelPeriodo: anoFiltro.toString()
     };
-  }, [anoFiltro, porAno, porAnoEstado, porAnoMunicipios, totalGeral, totalEstado, totalMunicipios, anos]);
+  }, [anoFiltro, somenteEfetivadas, porAno, porAnoEstado, porAnoMunicipios, porAnoEfetivado, porAnoEstadoEfetivado, porAnoMunicipiosEfetivado, totalGeral, totalEstado, totalMunicipios, totalGeralEfetivado, totalEstadoEfetivado, totalMunicipiosEfetivado, anos]);
 
-  // Filtrar entes por ano selecionado
+  // Filtrar entes por ano selecionado e área
   const muniF = useMemo(() => {
     let lista = municipios;
     if (anoFiltro) {
       const anoNum = parseInt(anoFiltro);
-      lista = municipios.filter(m => m.anos[anoNum] && m.anos[anoNum] > 0);
+      lista = lista.filter(m => m.anos[anoNum] && m.anos[anoNum] > 0);
+    }
+    if (areaFiltro) {
+      lista = lista.filter(m =>
+        m.planos.some(p => p.area_politica === areaFiltro && (!anoFiltro || p.ano === parseInt(anoFiltro)))
+      );
     }
     if (buscaE) {
       lista = lista.filter(m => m.nome.toLowerCase().includes(buscaE.toLowerCase()));
     }
     return lista;
-  }, [municipios, anoFiltro, buscaE]);
+  }, [municipios, anoFiltro, areaFiltro, buscaE]);
 
-  // Filtrar parlamentares por ano selecionado
+  // Filtrar parlamentares por ano selecionado e área
   const parlF = useMemo(() => {
     let lista = parlamentares;
     if (anoFiltro) {
       const anoNum = parseInt(anoFiltro);
-      lista = parlamentares.filter(p => p.anos[anoNum] && p.anos[anoNum] > 0);
+      lista = lista.filter(p => p.anos[anoNum] && p.anos[anoNum] > 0);
+    }
+    if (areaFiltro) {
+      lista = lista.filter(p =>
+        p.planos.some(pl => pl.area_politica === areaFiltro && (!anoFiltro || pl.ano === parseInt(anoFiltro)))
+      );
     }
     if (buscaP) {
       lista = lista.filter(p => p.nome.toLowerCase().includes(buscaP.toLowerCase()));
     }
     return lista;
-  }, [parlamentares, anoFiltro, buscaP]);
+  }, [parlamentares, anoFiltro, areaFiltro, buscaP]);
 
   // Verificar se estado tem dados no ano filtrado
   const estadoVisivel = useMemo(() => {
     if (!estado) return false;
     if (!anoFiltro) return true;
     const anoNum = parseInt(anoFiltro);
-    return estado.anos[anoNum] && estado.anos[anoNum] > 0;
-  }, [estado, anoFiltro]);
+    if (!(estado.anos[anoNum] && estado.anos[anoNum] > 0)) return false;
+    if (areaFiltro) {
+      return estado.planos.some(p => p.area_politica === areaFiltro && p.ano === anoNum);
+    }
+    return true;
+  }, [estado, anoFiltro, areaFiltro]);
 
-  // Dados para gráficos
+  // Dados para gráfico de áreas - atualiza com ano selecionado
+  const dadosArea = useMemo(() => {
+    let areaData;
+    if (anoFiltro && porAreaPorAno) {
+      areaData = porAreaPorAno[parseInt(anoFiltro)] || {};
+    } else {
+      areaData = porArea || {};
+    }
+    return Object.entries(areaData).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  }, [anoFiltro, porArea, porAreaPorAno]);
+
+  const tFins = dadosArea.reduce((a, [, v]) => a + v, 0);
+
   const cores = [
     { f: '#0d9488', bg: 'bg-teal-600' },
     { f: '#f59e0b', bg: 'bg-amber-500' },
@@ -73,15 +135,12 @@ export default function PaginaInicial({ dados, anoFiltro, onAnoChange, onEnte, o
     { f: '#8b5cf6', bg: 'bg-violet-500' }
   ];
 
-  const dFins = Object.entries(porArea).sort((a, b) => b[1] - a[1]).slice(0, 5);
-  const tFins = dFins.reduce((a, [, v]) => a + v, 0);
-
   let ac = 0;
-  const segs = dFins.map(([, v], i) => {
-    const p = (v / tFins) * 100;
+  const segs = dadosArea.map(([, v], i) => {
+    const p = tFins > 0 ? (v / tFins) * 100 : 0;
     const ini = ac;
     ac += p;
-    return { ini, fim: ac, cor: cores[i].f };
+    return { ini, fim: ac, cor: cores[i]?.f || '#94a3b8' };
   });
 
   // Calcular max para o gráfico de barras (usa porAno total para escala consistente)
@@ -96,7 +155,23 @@ export default function PaginaInicial({ dados, anoFiltro, onAnoChange, onEnte, o
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-teal-500/20 to-transparent rounded-full blur-2xl -translate-y-1/2 translate-x-1/4" />
             <div className="relative">
               <div className="flex items-start justify-between mb-1">
-                <p className="text-slate-400 text-sm">Total Transferido ({dadosFiltrados.labelPeriodo})</p>
+                <div>
+                  <p className="text-slate-400 text-sm">
+                    Total {somenteEfetivadas ? 'Efetivado' : 'Empenhado'} ({dadosFiltrados.labelPeriodo})
+                  </p>
+                  {/* Toggle para apenas efetivadas */}
+                  <button
+                    onClick={() => onEfetivadosChange && onEfetivadosChange(!somenteEfetivadas)}
+                    className="flex items-center gap-1.5 mt-1 text-xs text-slate-500 hover:text-teal-400 transition-colors"
+                  >
+                    {somenteEfetivadas ? (
+                      <ToggleRight className="w-5 h-5 text-teal-400" />
+                    ) : (
+                      <ToggleLeft className="w-5 h-5 text-slate-500" />
+                    )}
+                    <span>{somenteEfetivadas ? 'Apenas OBs' : 'Ver OBs'}</span>
+                  </button>
+                </div>
                 <div className="p-2 bg-white/10 rounded-xl">
                   <Wallet className="w-4 h-4 text-teal-400" />
                 </div>
@@ -273,7 +348,17 @@ export default function PaginaInicial({ dados, anoFiltro, onAnoChange, onEnte, o
         </div>
         <div style={{ flex: '1 1 38%', minWidth: '280px' }}>
           <Card className="p-6 h-full">
-            <h3 className="text-lg font-semibold text-slate-800 mb-4">Distribuição por Área</h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-slate-800">Distribuição por Área</h3>
+              {areaFiltro && (
+                <button
+                  onClick={() => onAreaChange && onAreaChange(null)}
+                  className="text-xs text-teal-600 hover:text-teal-700 font-medium"
+                >
+                  Limpar filtro
+                </button>
+              )}
+            </div>
             <div className="relative w-36 h-36 mx-auto mb-4">
               <svg viewBox="0 0 100 100" className="w-full h-full" style={{ transform: 'rotate(-90deg)' }}>
                 {segs.map((s, i) => {
@@ -296,13 +381,26 @@ export default function PaginaInicial({ dados, anoFiltro, onAnoChange, onEnte, o
               </svg>
             </div>
             <div className="space-y-2">
-              {dFins.map(([f, v], i) => (
-                <div key={f} className="flex items-center gap-2">
-                  <div className={'w-3 h-3 rounded-full flex-shrink-0 ' + cores[i].bg} />
-                  <span className="text-sm text-slate-600 flex-1 truncate">{f}</span>
-                  <span className="text-sm font-bold text-slate-800">{((v / tFins) * 100).toFixed(0)}%</span>
-                </div>
-              ))}
+              {dadosArea.map(([f, v], i) => {
+                const isSelected = areaFiltro === f;
+                return (
+                  <div
+                    key={f}
+                    onClick={() => onAreaChange && onAreaChange(areaFiltro === f ? null : f)}
+                    className={`flex items-center gap-2 cursor-pointer p-1.5 -mx-1.5 rounded-lg transition-all ${
+                      isSelected ? 'bg-teal-50 ring-2 ring-teal-500' : 'hover:bg-slate-50'
+                    }`}
+                  >
+                    <div className={'w-3 h-3 rounded-full flex-shrink-0 ' + (cores[i]?.bg || 'bg-slate-400')} />
+                    <span className={`text-sm flex-1 truncate ${isSelected ? 'text-teal-700 font-medium' : 'text-slate-600'}`}>
+                      {f}
+                    </span>
+                    <span className={`text-sm font-bold ${isSelected ? 'text-teal-700' : 'text-slate-800'}`}>
+                      {tFins > 0 ? ((v / tFins) * 100).toFixed(0) : 0}%
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </Card>
         </div>

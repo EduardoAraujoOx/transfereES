@@ -13,21 +13,21 @@ export default function App() {
   const [ajuda, setAjuda] = useState(false);
   const [origem, setOrigem] = useState(null);
   const [anoFiltro, setAnoFiltro] = useState(null); // null = Todos
+  const [areaFiltro, setAreaFiltro] = useState(null); // null = Todas
+  const [somenteEfetivadas, setSomenteEfetivadas] = useState(false);
 
   const { data, loading, error, refetch } = useApi(fetchDadosAgregados, []);
 
-  const irEnte = (e, ano = null) => {
+  const irEnte = (e) => {
     setEnte(e);
     setOrigem('inicial');
-    if (ano !== null) setAnoFiltro(ano);
     setPag('ente');
     window.scrollTo(0, 0);
   };
 
-  const irParl = (p, ano = null) => {
+  const irParl = (p) => {
     setParl(p);
     setOrigem('inicial');
-    if (ano !== null) setAnoFiltro(ano);
     setPag('parl');
     window.scrollTo(0, 0);
   };
@@ -81,14 +81,21 @@ export default function App() {
                 dados={data}
                 anoFiltro={anoFiltro}
                 onAnoChange={setAnoFiltro}
-                onEnte={(e) => irEnte(e, anoFiltro)}
-                onParlamentar={(p) => irParl(p, anoFiltro)}
+                areaFiltro={areaFiltro}
+                onAreaChange={setAreaFiltro}
+                somenteEfetivadas={somenteEfetivadas}
+                onEfetivadosChange={setSomenteEfetivadas}
+                onEnte={irEnte}
+                onParlamentar={irParl}
               />
             )}
             {pag === 'ente' && ente && (
               <PaginaEnte
                 ente={ente}
+                dados={data}
                 anoInicial={anoFiltro}
+                areaInicial={areaFiltro}
+                somenteEfetivadas={somenteEfetivadas}
                 onVoltar={voltarIni}
                 onExec={irExec}
               />
@@ -96,7 +103,10 @@ export default function App() {
             {pag === 'parl' && parl && (
               <PaginaParlamentar
                 parl={parl}
+                dados={data}
                 anoInicial={anoFiltro}
+                areaInicial={areaFiltro}
+                somenteEfetivadas={somenteEfetivadas}
                 onVoltar={voltarIni}
                 onExec={(e) => { setOrigem('parl'); irExec(e); }}
               />

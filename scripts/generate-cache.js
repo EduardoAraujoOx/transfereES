@@ -1,10 +1,13 @@
 /**
  * Script para gerar cache dos dados do TransfereGov ES
  * Executado via GitHub Actions diariamente às 3h da manhã
+ *
+ * Inclui integração com dados de Ordem Bancária (OB) para mostrar
+ * valores efetivamente transferidos vs valores empenhados
  */
 
 const BASE_URL = 'https://api.transferegov.gestao.gov.br/transferenciasespeciais';
-const ANOS = [2021, 2022, 2023, 2024, 2025];
+const ANOS = [2020, 2021, 2022, 2023, 2024, 2025];
 
 async function fetchJSON(url) {
   const response = await fetch(url, {
@@ -37,6 +40,7 @@ function processarPlano(plano) {
     valor_custeio: valorCusteio,
     valor_investimento: valorInvestimento,
     valor_total: valorCusteio + valorInvestimento,
+    valor_efetivado: 0, // Será preenchido com valor das OBs
     recurso_recebido: (plano.situacao_plano_acao || '').toUpperCase().includes('CIENTE'),
     banco: plano.nome_banco_plano_acao || null,
     agencia: plano.numero_agencia_plano_acao ?
@@ -125,6 +129,68 @@ async function fetchMetas(idExecutor) {
   return fetchJSON(url);
 }
 
+// Buscar empenhos de um plano de ação
+async function fetchEmpenhos(idPlano) {
+  const url = `${BASE_URL}/empenho_especial?id_plano_acao=eq.${idPlano}`;
+  return fetchJSON(url);
+}
+
+// Buscar documentos hábeis de um empenho
+async function fetchDocumentosHabeis(idEmpenho) {
+  const url = `${BASE_URL}/documento_habil_especial?id_empenho=eq.${idEmpenho}`;
+  return fetchJSON(url);
+}
+
+// Buscar ordens de pagamento/bancárias de um documento hábil
+async function fetchOrdensPagamento(idDh) {
+  const url = `${BASE_URL}/ordem_pagamento_ordem_bancaria_especial?id_dh=eq.${idDh}`;
+  return fetchJSON(url);
+}
+
+// Buscar valor efetivado (OBs emitidas) para um plano
+async function buscarValorEfetivado(idPlano) {
+  try {
+    // 1. Buscar empenhos do plano
+    const empenhos = await fetchEmpenhos(idPlano);
+    if (!Array.isArray(empenhos) || empenhos.length === 0) return 0;
+
+    let valorTotalOB = 0;
+
+    // 2. Para cada empenho, buscar documentos hábeis
+    for (const empenho of empenhos) {
+      try {
+        const docs = await fetchDocumentosHabeis(empenho.id_empenho);
+        if (!Array.isArray(docs) || docs.length === 0) continue;
+
+        // 3. Para cada documento hábil, buscar ordens de pagamento
+        for (const doc of docs) {
+          try {
+            const ordens = await fetchOrdensPagamento(doc.id_dh);
+            if (!Array.isArray(ordens) || ordens.length === 0) continue;
+
+            // 4. Somar valores das OBs emitidas (com número de OB preenchido)
+            for (const ordem of ordens) {
+              if (ordem.numero_ordem_bancaria) {
+                // Usar valor do documento hábil como referência
+                valorTotalOB += parseFloat(doc.valor_dh || 0);
+                break; // Cada doc.valor_dh só deve ser somado uma vez
+              }
+            }
+          } catch (err) {
+            // Ignorar erros de ordem de pagamento individual
+          }
+        }
+      } catch (err) {
+        // Ignorar erros de documento hábil individual
+      }
+    }
+
+    return valorTotalOB;
+  } catch (err) {
+    return 0;
+  }
+}
+
 async function gerarCache() {
   console.log('Iniciando geração de cache...');
   console.log(`Data/hora: ${new Date().toISOString()}`);
@@ -153,9 +219,16 @@ async function gerarCache() {
   const porAnoEstado = {};
   const porAnoMunicipios = {};
   const porArea = {};
+  const porAreaPorAno = {}; // { ano: { area: valor } }
+
+  // Estruturas para valores efetivados
+  const porAnoEfetivado = {};
+  const porAnoEstadoEfetivado = {};
+  const porAnoMunicipiosEfetivado = {};
 
   const planosProcessados = todosPlanos.map(processarPlano);
 
+  // Primeira passagem: estruturar dados básicos
   planosProcessados.forEach(plano => {
     const cnpj = plano.cnpj_beneficiario;
     const parlamentar = plano.parlamentar;
@@ -168,6 +241,7 @@ async function gerarCache() {
     // Identificar se é estado ou município
     const nome = plano.nome_beneficiario || 'Não informado';
     const isEstado = nome.toUpperCase().includes('ESTADO') || nome.toUpperCase().includes('GOVERNO DO ESTADO');
+    plano._isEstado = isEstado;
 
     // Por ente
     if (!porEnte[cnpj]) {
@@ -177,6 +251,7 @@ async function gerarCache() {
         nome: nome,
         tipo: isEstado ? 'estado' : 'municipio',
         anos: {},
+        anosEfetivados: {},
         planos: []
       };
     }
@@ -189,9 +264,11 @@ async function gerarCache() {
         porParlamentar[parlamentar] = {
           nome: parlamentar,
           total: 0,
+          totalEfetivado: 0,
           planos: [],
           entes: [],
-          anos: {}
+          anos: {},
+          anosEfetivados: {}
         };
       }
       porParlamentar[parlamentar].total += valor;
@@ -212,12 +289,71 @@ async function gerarCache() {
       porAnoMunicipios[ano] = (porAnoMunicipios[ano] || 0) + valor;
     }
 
-    // Por área
+    // Por área (total)
     porArea[area] = (porArea[area] || 0) + valor;
+
+    // Por área por ano
+    if (!porAreaPorAno[ano]) {
+      porAreaPorAno[ano] = {};
+    }
+    porAreaPorAno[ano][area] = (porAreaPorAno[ano][area] || 0) + valor;
   });
 
-  // 3. Buscar executores e metas para cada plano
-  console.log('\n3. Buscando executores e metas...');
+  // 3. Buscar valores efetivados (OBs) para cada plano
+  console.log('\n3. Buscando valores efetivados (OBs)...');
+  let planosComOB = 0;
+  let totalEfetivado = 0;
+
+  for (let i = 0; i < planosProcessados.length; i++) {
+    const plano = planosProcessados[i];
+
+    try {
+      const valorEfetivado = await buscarValorEfetivado(plano.id);
+      plano.valor_efetivado = valorEfetivado;
+
+      if (valorEfetivado > 0) {
+        planosComOB++;
+        totalEfetivado += valorEfetivado;
+
+        const ano = plano.ano;
+        const parlamentar = plano.parlamentar;
+        const cnpj = plano.cnpj_beneficiario;
+
+        // Atualizar totais efetivados por ano
+        porAnoEfetivado[ano] = (porAnoEfetivado[ano] || 0) + valorEfetivado;
+
+        if (plano._isEstado) {
+          porAnoEstadoEfetivado[ano] = (porAnoEstadoEfetivado[ano] || 0) + valorEfetivado;
+        } else {
+          porAnoMunicipiosEfetivado[ano] = (porAnoMunicipiosEfetivado[ano] || 0) + valorEfetivado;
+        }
+
+        // Atualizar ente
+        if (cnpj && porEnte[cnpj]) {
+          porEnte[cnpj].anosEfetivados[ano] = (porEnte[cnpj].anosEfetivados[ano] || 0) + valorEfetivado;
+        }
+
+        // Atualizar parlamentar
+        if (parlamentar && porParlamentar[parlamentar]) {
+          porParlamentar[parlamentar].totalEfetivado += valorEfetivado;
+          porParlamentar[parlamentar].anosEfetivados[ano] =
+            (porParlamentar[parlamentar].anosEfetivados[ano] || 0) + valorEfetivado;
+        }
+      }
+    } catch (err) {
+      plano.valor_efetivado = 0;
+    }
+
+    // Log de progresso
+    if ((i + 1) % 10 === 0 || i === planosProcessados.length - 1) {
+      process.stdout.write(`   Processando OBs: ${i + 1}/${planosProcessados.length} planos (${planosComOB} com OB)\r`);
+    }
+  }
+
+  console.log(`\n   Total com OB: ${planosComOB} planos, R$ ${(totalEfetivado / 1e6).toFixed(1)} Mi efetivados`);
+
+  // 4. Buscar executores e metas para cada plano
+  console.log('\n4. Buscando executores e metas...');
   let totalExecutores = 0;
   let totalMetas = 0;
 
@@ -265,18 +401,22 @@ async function gerarCache() {
         plano.executores = executores;
         totalExecutores += executores.length;
 
+        // Limpar propriedade temporária
+        delete plano._isEstado;
+
       } catch (err) {
         plano.executores = [];
+        delete plano._isEstado;
       }
     }
 
-    process.stdout.write(`   ${ente.nome.substring(0, 30).padEnd(30)} - ${ente.planos.length} planos processados\r`);
+    process.stdout.write(`   ${ente.nome.substring(0, 30).padEnd(30)} - ${ente.planos.length} planos\r`);
   }
 
   console.log(`\n   Total: ${totalExecutores} executores, ${totalMetas} metas`);
 
-  // 4. Montar estrutura final
-  console.log('\n4. Montando estrutura final...');
+  // 5. Montar estrutura final
+  console.log('\n5. Montando estrutura final...');
 
   const entes = Object.values(porEnte);
   const estado = entes.find(e => e.tipo === 'estado');
@@ -291,6 +431,9 @@ async function gerarCache() {
   const totalEstado = estado ? Object.values(estado.anos).reduce((a, b) => a + b, 0) : 0;
   const totalMunicipios = municipios.reduce((acc, m) => acc + Object.values(m.anos).reduce((a, b) => a + b, 0), 0);
 
+  const totalEstadoEfetivado = estado ? Object.values(estado.anosEfetivados || {}).reduce((a, b) => a + b, 0) : 0;
+  const totalMunicipiosEfetivado = municipios.reduce((acc, m) => acc + Object.values(m.anosEfetivados || {}).reduce((a, b) => a + b, 0), 0);
+
   const dadosCache = {
     atualizadoEm: new Date().toISOString(),
     estado,
@@ -299,20 +442,27 @@ async function gerarCache() {
     porAno,
     porAnoEstado,
     porAnoMunicipios,
+    porAnoEfetivado,
+    porAnoEstadoEfetivado,
+    porAnoMunicipiosEfetivado,
     porArea,
+    porAreaPorAno,
     totalEstado,
     totalMunicipios,
-    totalGeral: totalEstado + totalMunicipios
+    totalGeral: totalEstado + totalMunicipios,
+    totalEstadoEfetivado,
+    totalMunicipiosEfetivado,
+    totalGeralEfetivado: totalEstadoEfetivado + totalMunicipiosEfetivado
   };
 
-  // 5. Salvar arquivo
+  // 6. Salvar arquivo
   const fs = await import('fs');
   const path = await import('path');
 
   const outputPath = path.join(process.cwd(), 'public', 'dados-es.json');
   fs.writeFileSync(outputPath, JSON.stringify(dadosCache, null, 2));
 
-  console.log(`\n5. Cache salvo em: ${outputPath}`);
+  console.log(`\n6. Cache salvo em: ${outputPath}`);
   console.log(`   Tamanho: ${(fs.statSync(outputPath).size / 1024 / 1024).toFixed(2)} MB`);
   console.log('\nCache gerado com sucesso!');
 
@@ -323,9 +473,13 @@ async function gerarCache() {
   console.log(`  - Municípios: ${municipios.length}`);
   console.log(`Total de parlamentares: ${Object.keys(porParlamentar).length}`);
   console.log(`Total de planos: ${planosProcessados.length}`);
+  console.log(`  - Com OB emitida: ${planosComOB}`);
   console.log(`Total de executores: ${totalExecutores}`);
   console.log(`Total de metas: ${totalMetas}`);
-  console.log(`Valor total: R$ ${(dadosCache.totalGeral / 1e6).toFixed(1)} milhões`);
+  console.log(`\nValores:`);
+  console.log(`  - Empenhado: R$ ${(dadosCache.totalGeral / 1e6).toFixed(1)} milhões`);
+  console.log(`  - Efetivado (OB): R$ ${(dadosCache.totalGeralEfetivado / 1e6).toFixed(1)} milhões`);
+  console.log(`  - % Efetivado: ${((dadosCache.totalGeralEfetivado / dadosCache.totalGeral) * 100).toFixed(1)}%`);
 }
 
 gerarCache().catch(err => {

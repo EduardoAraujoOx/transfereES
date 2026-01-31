@@ -211,6 +211,7 @@ function processarDadosAgregados(planosRaw) {
   const porAnoEstado = {};
   const porAnoMunicipios = {};
   const porArea = {};
+  const porAreaPorAno = {}; // { ano: { area: valor } }
 
   const planos = planosRaw.map(processarPlano);
 
@@ -267,8 +268,14 @@ function processarDadosAgregados(planosRaw) {
       porAnoMunicipios[ano] = (porAnoMunicipios[ano] || 0) + valor;
     }
 
-    // Por área
+    // Por área (total)
     porArea[area] = (porArea[area] || 0) + valor;
+
+    // Por área por ano
+    if (!porAreaPorAno[ano]) {
+      porAreaPorAno[ano] = {};
+    }
+    porAreaPorAno[ano][area] = (porAreaPorAno[ano][area] || 0) + valor;
   });
 
   // Separar estado dos municípios
@@ -293,9 +300,10 @@ function processarDadosAgregados(planosRaw) {
       .map(p => ({ ...p, entes: p.entes }))
       .sort((a, b) => b.total - a.total),
     porAno,
-    porAnoEstado: porAnoEstado,
-    porAnoMunicipios: porAnoMunicipios,
+    porAnoEstado,
+    porAnoMunicipios,
     porArea,
+    porAreaPorAno,
     totalEstado,
     totalMunicipios,
     totalGeral: totalEstado + totalMunicipios
@@ -313,7 +321,7 @@ export async function fetchDadosAgregados() {
 
   // Fallback: buscar da API (mais lento)
   console.log('Carregando dados da API...');
-  const anos = [2021, 2022, 2023, 2024, 2025];
+  const anos = [2020, 2021, 2022, 2023, 2024, 2025];
   const todosPlanos = [];
 
   for (const ano of anos) {
