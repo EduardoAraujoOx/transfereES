@@ -171,12 +171,29 @@ async function gerarCache() {
     empenhosPorPlano[e.id_plano_acao].push(e);
   });
 
-  // 1.3 Buscar todos os documentos hábeis
-  console.log('1.3 Buscando documentos hábeis...');
-  const todosDocumentos = await fetchAllPaginated(
-    `${BASE_URL}/documento_habil_especial?select=id_dh,id_empenho,valor_dh`
-  );
-  console.log(`    Total: ${todosDocumentos.length} documentos hábeis\n`);
+  // 1.3 Buscar documentos hábeis APENAS para empenhos do ES (mais eficiente)
+  console.log('1.3 Buscando documentos hábeis dos empenhos ES...');
+  const empenhoIds = todosEmpenhos.map(e => e.id_empenho).filter(Boolean);
+  const todosDocumentos = [];
+
+  // Buscar em batches para evitar URLs muito longas
+  const dhBatchSize = 100;
+  for (let i = 0; i < empenhoIds.length; i += dhBatchSize) {
+    const batch = empenhoIds.slice(i, i + dhBatchSize);
+    const idsParam = batch.join(',');
+
+    try {
+      const docs = await fetchJSON(
+        `${BASE_URL}/documento_habil_especial?id_empenho=in.(${idsParam})&select=id_dh,id_empenho,valor_dh`
+      );
+      todosDocumentos.push(...docs);
+    } catch (err) {
+      console.error(`    Erro no batch de documentos ${i}-${i + dhBatchSize}: ${err.message}`);
+    }
+
+    process.stdout.write(`    Processando batch ${Math.min(i + dhBatchSize, empenhoIds.length)}/${empenhoIds.length}\r`);
+  }
+  console.log(`\n    Total: ${todosDocumentos.length} documentos hábeis\n`);
 
   // Criar mapa de documentos por empenho
   const documentosPorEmpenho = {};
@@ -187,12 +204,27 @@ async function gerarCache() {
     documentosPorEmpenho[d.id_empenho].push(d);
   });
 
-  // 1.4 Buscar todas as OBs emitidas
-  console.log('1.4 Buscando ordens bancárias (OBs)...');
-  const todasOBs = await fetchAllPaginated(
-    `${BASE_URL}/ordem_pagamento_ordem_bancaria_especial?numero_ordem_bancaria=not.is.null&select=id_dh,numero_ordem_bancaria`
-  );
-  console.log(`    Total: ${todasOBs.length} OBs emitidas\n`);
+  // 1.4 Buscar OBs APENAS para documentos hábeis encontrados
+  console.log('1.4 Buscando ordens bancárias (OBs) dos documentos ES...');
+  const dhIds = todosDocumentos.map(d => d.id_dh).filter(Boolean);
+  const todasOBs = [];
+
+  for (let i = 0; i < dhIds.length; i += dhBatchSize) {
+    const batch = dhIds.slice(i, i + dhBatchSize);
+    const idsParam = batch.join(',');
+
+    try {
+      const obs = await fetchJSON(
+        `${BASE_URL}/ordem_pagamento_ordem_bancaria_especial?id_dh=in.(${idsParam})&numero_ordem_bancaria=not.is.null&select=id_dh,numero_ordem_bancaria`
+      );
+      todasOBs.push(...obs);
+    } catch (err) {
+      console.error(`    Erro no batch de OBs ${i}-${i + dhBatchSize}: ${err.message}`);
+    }
+
+    process.stdout.write(`    Processando batch ${Math.min(i + dhBatchSize, dhIds.length)}/${dhIds.length}\r`);
+  }
+  console.log(`\n    Total: ${todasOBs.length} OBs emitidas\n`);
 
   // Criar set de documentos que têm OB emitida
   const dhsComOB = new Set(todasOBs.map(ob => ob.id_dh));
@@ -271,9 +303,16 @@ async function gerarCache() {
   // ========================================
   console.log('\n=== FASE 2: Calculando valores efetivados ===\n');
 
+  // Estatísticas para diagnóstico
+  console.log(`Documentos hábeis encontrados: ${todosDocumentos.length}`);
+  console.log(`OBs emitidas encontradas: ${todasOBs.length}`);
+  console.log(`DHs com OB (set size): ${dhsComOB.size}`);
+
   // Para cada plano, calcular o valor efetivado (soma dos documentos hábeis com OB emitida)
   const valorEfetivadoPorPlano = {};
   let totalPlanosComOB = 0;
+  let totalDocumentosProcessados = 0;
+  let totalDocumentosComOB = 0;
 
   todosPlanos.forEach(plano => {
     const idPlano = plano.id_plano_acao;
@@ -285,11 +324,13 @@ async function gerarCache() {
     empenhos.forEach(empenho => {
       // Buscar documentos do empenho
       const docs = documentosPorEmpenho[empenho.id_empenho] || [];
+      totalDocumentosProcessados += docs.length;
 
       docs.forEach(doc => {
         // Verificar se este documento tem OB emitida
         if (dhsComOB.has(doc.id_dh)) {
           valorEfetivado += parseFloat(doc.valor_dh || 0);
+          totalDocumentosComOB++;
         }
       });
     });
@@ -301,6 +342,8 @@ async function gerarCache() {
     valorEfetivadoPorPlano[idPlano] = valorEfetivado;
   });
 
+  console.log(`Documentos processados: ${totalDocumentosProcessados}`);
+  console.log(`Documentos com OB: ${totalDocumentosComOB}`);
   console.log(`Planos com OB emitida: ${totalPlanosComOB}/${todosPlanos.length}`);
 
   // ========================================
@@ -318,6 +361,8 @@ async function gerarCache() {
   const porAnoMunicipiosEfetivado = {};
   const porArea = {};
   const porAreaPorAno = {};
+  const porAreaEfetivado = {};
+  const porAreaPorAnoEfetivado = {};
 
   const planosProcessados = todosPlanos.map(planoRaw => {
     const plano = processarPlano(planoRaw);
@@ -418,14 +463,23 @@ async function gerarCache() {
       porAnoMunicipiosEfetivado[ano] = (porAnoMunicipiosEfetivado[ano] || 0) + valorEfetivado;
     }
 
-    // Por área (total)
+    // Por área (total empenhado)
     porArea[area] = (porArea[area] || 0) + valor;
 
-    // Por área por ano
+    // Por área efetivado (total)
+    porAreaEfetivado[area] = (porAreaEfetivado[area] || 0) + valorEfetivado;
+
+    // Por área por ano (empenhado)
     if (!porAreaPorAno[ano]) {
       porAreaPorAno[ano] = {};
     }
     porAreaPorAno[ano][area] = (porAreaPorAno[ano][area] || 0) + valor;
+
+    // Por área por ano efetivado
+    if (!porAreaPorAnoEfetivado[ano]) {
+      porAreaPorAnoEfetivado[ano] = {};
+    }
+    porAreaPorAnoEfetivado[ano][area] = (porAreaPorAnoEfetivado[ano][area] || 0) + valorEfetivado;
   });
 
   // Montar estrutura final
@@ -460,6 +514,8 @@ async function gerarCache() {
     porAnoMunicipiosEfetivado,
     porArea,
     porAreaPorAno,
+    porAreaEfetivado,
+    porAreaPorAnoEfetivado,
     totalEstado,
     totalMunicipios,
     totalGeral: totalEstado + totalMunicipios,

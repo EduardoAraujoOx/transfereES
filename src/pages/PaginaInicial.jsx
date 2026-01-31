@@ -29,6 +29,8 @@ export default function PaginaInicial({
     porAnoMunicipiosEfetivado,
     porArea,
     porAreaPorAno,
+    porAreaEfetivado,
+    porAreaPorAnoEfetivado,
     totalEstado,
     totalMunicipios,
     totalGeral,
@@ -218,16 +220,26 @@ export default function PaginaInicial({
     return true;
   }, [estado, anoFiltro, areaFiltro, somenteEfetivadas]);
 
-  // Dados para gráfico de áreas - atualiza com ano selecionado
+  // Dados para gráfico de áreas - atualiza com ano selecionado e toggle efetivadas
   const dadosArea = useMemo(() => {
     let areaData;
-    if (anoFiltro && porAreaPorAno) {
-      areaData = porAreaPorAno[parseInt(anoFiltro)] || {};
+    if (somenteEfetivadas) {
+      // Usar dados efetivados
+      if (anoFiltro && porAreaPorAnoEfetivado) {
+        areaData = porAreaPorAnoEfetivado[parseInt(anoFiltro)] || {};
+      } else {
+        areaData = porAreaEfetivado || {};
+      }
     } else {
-      areaData = porArea || {};
+      // Usar dados empenhados (planejados)
+      if (anoFiltro && porAreaPorAno) {
+        areaData = porAreaPorAno[parseInt(anoFiltro)] || {};
+      } else {
+        areaData = porArea || {};
+      }
     }
     return Object.entries(areaData).sort((a, b) => b[1] - a[1]).slice(0, 5);
-  }, [anoFiltro, porArea, porAreaPorAno]);
+  }, [anoFiltro, somenteEfetivadas, porArea, porAreaPorAno, porAreaEfetivado, porAreaPorAnoEfetivado]);
 
   const tFins = dadosArea.reduce((a, [, v]) => a + v, 0);
 
@@ -247,8 +259,13 @@ export default function PaginaInicial({
     return { ini, fim: ac, cor: cores[i]?.f || '#94a3b8' };
   });
 
-  // Calcular max para o gráfico de barras
-  const maxAno = Math.max(...anos.map(a => porAno[a] || 0));
+  // Calcular max para o gráfico de barras - usa dados corretos baseado no toggle
+  const maxAno = useMemo(() => {
+    if (somenteEfetivadas) {
+      return Math.max(...anos.map(a => porAnoEfetivado?.[a] || 0), 1);
+    }
+    return Math.max(...anos.map(a => porAno[a] || 0), 1);
+  }, [anos, porAno, porAnoEfetivado, somenteEfetivadas]);
 
   // Gerar label de filtros ativos para os boxes
   const gerarLabelFiltros = () => {
@@ -398,10 +415,15 @@ export default function PaginaInicial({
             {/* Gráfico de Barras Empilhadas */}
             <div className="space-y-3">
               {anos.map(ano => {
-                const vEstado = porAnoEstado?.[ano] || 0;
-                const vMunicipios = porAnoMunicipios?.[ano] || 0;
+                // Usar valores efetivados ou empenhados baseado no toggle
+                const vEstado = somenteEfetivadas
+                  ? (porAnoEstadoEfetivado?.[ano] || 0)
+                  : (porAnoEstado?.[ano] || 0);
+                const vMunicipios = somenteEfetivadas
+                  ? (porAnoMunicipiosEfetivado?.[ano] || 0)
+                  : (porAnoMunicipios?.[ano] || 0);
                 const vTotal = vEstado + vMunicipios;
-                const pTotal = (vTotal / maxAno) * 100;
+                const pTotal = maxAno > 0 ? (vTotal / maxAno) * 100 : 0;
                 const pEstado = vTotal > 0 ? (vEstado / vTotal) * 100 : 0;
                 const pMunicipios = vTotal > 0 ? (vMunicipios / vTotal) * 100 : 0;
                 const isSelected = anoFiltro === ano;
