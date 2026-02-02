@@ -1,5 +1,5 @@
 {
-  "atualizadoEm": "2026-02-01T06:35:52.787Z",
+  "atualizadoEm": "2026-02-02T06:50:23.741Z",
   "estado": {
     "id": "27080530000143",
     "cnpj": "27080530000143",
@@ -1582,19 +1582,6 @@
                 "prazo_meses": 24
               },
               {
-                "id": 31550,
-                "sequencial": 2,
-                "nome": "Meta 2",
-                "descricao": "Construção de  Barraginhas",
-                "unidade_medida": "UN",
-                "quantidade": 1106,
-                "valor_custeio_emenda": 0,
-                "valor_investimento_emenda": 1197635.09,
-                "valor_custeio_proprio": 0,
-                "valor_investimento_proprio": 0,
-                "prazo_meses": 24
-              },
-              {
                 "id": 31549,
                 "sequencial": 1,
                 "nome": "Meta 1",
@@ -1603,6 +1590,19 @@
                 "quantidade": 1,
                 "valor_custeio_emenda": 0,
                 "valor_investimento_emenda": 142426.9,
+                "valor_custeio_proprio": 0,
+                "valor_investimento_proprio": 0,
+                "prazo_meses": 24
+              },
+              {
+                "id": 31550,
+                "sequencial": 2,
+                "nome": "Meta 2",
+                "descricao": "Construção de  Barraginhas",
+                "unidade_medida": "UN",
+                "quantidade": 1106,
+                "valor_custeio_emenda": 0,
+                "valor_investimento_emenda": 1197635.09,
                 "valor_custeio_proprio": 0,
                 "valor_investimento_proprio": 0,
                 "prazo_meses": 24
@@ -2160,6 +2160,58 @@
         "nome_beneficiario": "ESTADO DO ESPIRITO SANTO",
         "executores": [
           {
+            "id": "7693",
+            "cnpj": "31752645000104",
+            "nome": "SECRETARIA DE ESTADO DE MEIO AMBIENTE E RECURSOS HDRICOS",
+            "objeto": "Integrar diversas iniciativas ambientais voltadas para a restauração florestal e a conservação da biodiversidade local.",
+            "detalhamento_objeto": "Integrar diversas iniciativas ambientais voltadas para a restauração florestal e a conservação da biodiversidade local.",
+            "situacao_plano_trabalho": "Legado ADPF 854 STF / NT-TCU",
+            "numero_plano_trabalho": "",
+            "valor_custeio": 345000,
+            "valor_investimento": 0,
+            "banco": "Caixa Econômica Federal",
+            "agencia": "167-8",
+            "conta": "6672021-6",
+            "situacao_conta": "Conta Ativa",
+            "plano": {
+              "id": "67358",
+              "codigo": "09032024-067358",
+              "situacao": "CIENTE",
+              "parlamentar": "Helder Salomão",
+              "numero_emenda": "202433120025",
+              "area_politica": "Gestão Ambiental",
+              "recurso_recebido": true
+            },
+            "metas": [
+              {
+                "id": 11375,
+                "sequencial": 1,
+                "nome": "Meta 1",
+                "descricao": "Pesquisa sobre lontras do Rio Jucu e instalação de viveiro de mudas nativas.",
+                "unidade_medida": "UN",
+                "quantidade": 1,
+                "valor_custeio_emenda": 145000,
+                "valor_investimento_emenda": 0,
+                "valor_custeio_proprio": 0,
+                "valor_investimento_proprio": 0,
+                "prazo_meses": 24
+              },
+              {
+                "id": 11376,
+                "sequencial": 2,
+                "nome": "Meta 2",
+                "descricao": "Integração de Iniciativas para o Plantio de Árvores",
+                "unidade_medida": "UN",
+                "quantidade": 1,
+                "valor_custeio_emenda": 200000,
+                "valor_investimento_emenda": 0,
+                "valor_custeio_proprio": 0,
+                "valor_investimento_proprio": 0,
+                "prazo_meses": 12
+              }
+            ]
+          },
+          {
             "id": "7488",
             "cnpj": "27080555000147",
             "nome": "SECRETARIA DE ESTADO DA AGRICULTURA, ABASTECIMENTO, AQUICULTURA E PESCA - SEAG",
@@ -2299,58 +2351,6 @@
                 "valor_custeio_proprio": 0,
                 "valor_investimento_proprio": 0,
                 "prazo_meses": 21
-              }
-            ]
-          },
-          {
-            "id": "7693",
-            "cnpj": "31752645000104",
-            "nome": "SECRETARIA DE ESTADO DE MEIO AMBIENTE E RECURSOS HDRICOS",
-            "objeto": "Integrar diversas iniciativas ambientais voltadas para a restauração florestal e a conservação da biodiversidade local.",
-            "detalhamento_objeto": "Integrar diversas iniciativas ambientais voltadas para a restauração florestal e a conservação da biodiversidade local.",
-            "situacao_plano_trabalho": "Legado ADPF 854 STF / NT-TCU",
-            "numero_plano_trabalho": "",
-            "valor_custeio": 345000,
-            "valor_investimento": 0,
-            "banco": "Caixa Econômica Federal",
-            "agencia": "167-8",
-            "conta": "6672021-6",
-            "situacao_conta": "Conta Ativa",
-            "plano": {
-              "id": "67358",
-              "codigo": "09032024-067358",
-              "situacao": "CIENTE",
-              "parlamentar": "Helder Salomão",
-              "numero_emenda": "202433120025",
-              "area_politica": "Gestão Ambiental",
-              "recurso_recebido": true
-            },
-            "metas": [
-              {
-                "id": 11375,
-                "sequencial": 1,
-                "nome": "Meta 1",
-                "descricao": "Pesquisa sobre lontras do Rio Jucu e instalação de viveiro de mudas nativas.",
-                "unidade_medida": "UN",
-                "quantidade": 1,
-                "valor_custeio_emenda": 145000,
-                "valor_investimento_emenda": 0,
-                "valor_custeio_proprio": 0,
-                "valor_investimento_proprio": 0,
-                "prazo_meses": 24
-              },
-              {
-                "id": 11376,
-                "sequencial": 2,
-                "nome": "Meta 2",
-                "descricao": "Integração de Iniciativas para o Plantio de Árvores",
-                "unidade_medida": "UN",
-                "quantidade": 1,
-                "valor_custeio_emenda": 200000,
-                "valor_investimento_emenda": 0,
-                "valor_custeio_proprio": 0,
-                "valor_investimento_proprio": 0,
-                "prazo_meses": 12
               }
             ]
           },
@@ -14895,19 +14895,6 @@
               },
               "metas": [
                 {
-                  "id": 13413,
-                  "sequencial": 2,
-                  "nome": "Meta 2",
-                  "descricao": "Modernização do campo de Prosperidade - arquibancada e vestiário",
-                  "unidade_medida": "UN",
-                  "quantidade": 1,
-                  "valor_custeio_emenda": 0,
-                  "valor_investimento_emenda": 500000,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
                   "id": 13412,
                   "sequencial": 1,
                   "nome": "Meta 1",
@@ -14916,6 +14903,19 @@
                   "quantidade": 1,
                   "valor_custeio_emenda": 0,
                   "valor_investimento_emenda": 1000000,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
+                  "id": 13413,
+                  "sequencial": 2,
+                  "nome": "Meta 2",
+                  "descricao": "Modernização do campo de Prosperidade - arquibancada e vestiário",
+                  "unidade_medida": "UN",
+                  "quantidade": 1,
+                  "valor_custeio_emenda": 0,
+                  "valor_investimento_emenda": 500000,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
                   "prazo_meses": 36
@@ -24540,6 +24540,19 @@
                   "prazo_meses": 36
                 },
                 {
+                  "id": 75053,
+                  "sequencial": 6,
+                  "nome": "Meta 6",
+                  "descricao": "Tubos de concreto armado 60cmX2,00m",
+                  "unidade_medida": "UN",
+                  "quantidade": 62,
+                  "valor_custeio_emenda": 31000,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
                   "id": 75051,
                   "sequencial": 4,
                   "nome": "Meta 4",
@@ -24547,19 +24560,6 @@
                   "unidade_medida": "UN",
                   "quantidade": 30,
                   "valor_custeio_emenda": 23100,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
-                  "id": 75052,
-                  "sequencial": 5,
-                  "nome": "Meta 5",
-                  "descricao": "Tubo de concreto armado 100cmX1,00m",
-                  "unidade_medida": "UN",
-                  "quantidade": 62,
-                  "valor_custeio_emenda": 24769,
                   "valor_investimento_emenda": 0,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
@@ -24579,13 +24579,13 @@
                   "prazo_meses": 36
                 },
                 {
-                  "id": 75053,
-                  "sequencial": 6,
-                  "nome": "Meta 6",
-                  "descricao": "Tubos de concreto armado 60cmX2,00m",
+                  "id": 75052,
+                  "sequencial": 5,
+                  "nome": "Meta 5",
+                  "descricao": "Tubo de concreto armado 100cmX1,00m",
                   "unidade_medida": "UN",
                   "quantidade": 62,
-                  "valor_custeio_emenda": 31000,
+                  "valor_custeio_emenda": 24769,
                   "valor_investimento_emenda": 0,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
@@ -24781,19 +24781,6 @@
               },
               "metas": [
                 {
-                  "id": 59505,
-                  "sequencial": 6,
-                  "nome": "Meta 6",
-                  "descricao": "Cabo de cobre flexível 2.5mm² (peça com 100 metros)",
-                  "unidade_medida": "UN",
-                  "quantidade": 100,
-                  "valor_custeio_emenda": 10900,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
                   "id": 6682,
                   "sequencial": 1,
                   "nome": "Meta 1",
@@ -24820,6 +24807,19 @@
                   "prazo_meses": 36
                 },
                 {
+                  "id": 59505,
+                  "sequencial": 6,
+                  "nome": "Meta 6",
+                  "descricao": "Cabo de cobre flexível 2.5mm² (peça com 100 metros)",
+                  "unidade_medida": "UN",
+                  "quantidade": 100,
+                  "valor_custeio_emenda": 10900,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
                   "id": 59506,
                   "sequencial": 7,
                   "nome": "Meta 7",
@@ -24833,19 +24833,6 @@
                   "prazo_meses": 36
                 },
                 {
-                  "id": 59520,
-                  "sequencial": 21,
-                  "nome": "Meta 21",
-                  "descricao": "Calça em tecido feminina para servidoras da SEMIUBR",
-                  "unidade_medida": "UN",
-                  "quantidade": 280,
-                  "valor_custeio_emenda": 15120,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
                   "id": 59521,
                   "sequencial": 22,
                   "nome": "Meta 22",
@@ -24853,6 +24840,19 @@
                   "unidade_medida": "UN",
                   "quantidade": 375,
                   "valor_custeio_emenda": 20208.75,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
+                  "id": 59520,
+                  "sequencial": 21,
+                  "nome": "Meta 21",
+                  "descricao": "Calça em tecido feminina para servidoras da SEMIUBR",
+                  "unidade_medida": "UN",
+                  "quantidade": 280,
+                  "valor_custeio_emenda": 15120,
                   "valor_investimento_emenda": 0,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
@@ -31940,19 +31940,6 @@
                   "prazo_meses": 24
                 },
                 {
-                  "id": 96529,
-                  "sequencial": 19,
-                  "nome": "Meta 19",
-                  "descricao": "Jogos de mesa: Mesa plástica monobloco com 4 cadeiras, resistentes, empilháveis e adequados para ambientes escolares.",
-                  "unidade_medida": "UN",
-                  "quantidade": 60,
-                  "valor_custeio_emenda": 0,
-                  "valor_investimento_emenda": 14719.8,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 24
-                },
-                {
                   "id": 96522,
                   "sequencial": 12,
                   "nome": "Meta 12",
@@ -32013,6 +32000,19 @@
                   "quantidade": 2,
                   "valor_custeio_emenda": 0,
                   "valor_investimento_emenda": 1179.8,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 24
+                },
+                {
+                  "id": 96529,
+                  "sequencial": 19,
+                  "nome": "Meta 19",
+                  "descricao": "Jogos de mesa: Mesa plástica monobloco com 4 cadeiras, resistentes, empilháveis e adequados para ambientes escolares.",
+                  "unidade_medida": "UN",
+                  "quantidade": 60,
+                  "valor_custeio_emenda": 0,
+                  "valor_investimento_emenda": 14719.8,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
                   "prazo_meses": 24
@@ -36204,6 +36204,45 @@
               },
               "metas": [
                 {
+                  "id": 124925,
+                  "sequencial": 7,
+                  "nome": "Meta 7",
+                  "descricao": "fita de Ginática ",
+                  "unidade_medida": "UN",
+                  "quantidade": 20,
+                  "valor_custeio_emenda": 0,
+                  "valor_investimento_emenda": 1,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
+                  "id": 124926,
+                  "sequencial": 8,
+                  "nome": "Meta 8",
+                  "descricao": "Bola de Volley ",
+                  "unidade_medida": "UN",
+                  "quantidade": 40,
+                  "valor_custeio_emenda": 0,
+                  "valor_investimento_emenda": 1,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
+                  "id": 124927,
+                  "sequencial": 9,
+                  "nome": "Meta 9",
+                  "descricao": "Jogo de Rede de Futebol de Campo ",
+                  "unidade_medida": "UN",
+                  "quantidade": 1,
+                  "valor_custeio_emenda": 0,
+                  "valor_investimento_emenda": 1,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
                   "id": 43720,
                   "sequencial": 1,
                   "nome": "Meta 1",
@@ -36211,7 +36250,7 @@
                   "unidade_medida": "UN",
                   "quantidade": 1,
                   "valor_custeio_emenda": 0,
-                  "valor_investimento_emenda": 158276.83,
+                  "valor_investimento_emenda": 158273.83,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
                   "prazo_meses": 36
@@ -36233,9 +36272,9 @@
                   "id": 124780,
                   "sequencial": 6,
                   "nome": "Meta 6",
-                  "descricao": "Rede em polietileno com tratamento anti-UV, malha 15x15cm,  Fio 3, com medidas específicas 5,50m de largura x 2,30 de  altura, recuo superior: 0,50M, recuo inferior 1,80M ",
+                  "descricao": "Bola de Ginástica",
                   "unidade_medida": "UN",
-                  "quantidade": 3,
+                  "quantidade": 31,
                   "valor_custeio_emenda": 0,
                   "valor_investimento_emenda": 1,
                   "valor_custeio_proprio": 0,
@@ -36246,9 +36285,9 @@
                   "id": 124777,
                   "sequencial": 3,
                   "nome": "Meta 3",
-                  "descricao": "Bola de Futevôlei oficial Material: Poliuretano Laminado de  PU Circunferência: entre 62 a 64 cm Peso: entre 260 a 280  gramas. Tamanho: 5. Pressão:  entre 8 e 9 psi.",
+                  "descricao": "Bambole",
                   "unidade_medida": "UN",
-                  "quantidade": 30,
+                  "quantidade": 20,
                   "valor_custeio_emenda": 0,
                   "valor_investimento_emenda": 1,
                   "valor_custeio_proprio": 0,
@@ -36259,9 +36298,9 @@
                   "id": 124778,
                   "sequencial": 4,
                   "nome": "Meta 4",
-                  "descricao": "Bola de Beach Soccer oficial Material: Poliuretano  Laminado de PU Circunferência: entre 68 a 70 cm Peso:  entre 400 a 440 gramas. Tamanho: 5. Pressão:  entre 6 e 8  psi.",
+                  "descricao": "Bola de Futebol de Campo ",
                   "unidade_medida": "UN",
-                  "quantidade": 30,
+                  "quantidade": 22,
                   "valor_custeio_emenda": 0,
                   "valor_investimento_emenda": 1,
                   "valor_custeio_proprio": 0,
@@ -36272,9 +36311,9 @@
                   "id": 124779,
                   "sequencial": 5,
                   "nome": "Meta 5",
-                  "descricao": "Rede em polietileno com tratamento anti-UV, malha  15x15cm, Fio 3, com medidas específicas 5,50m de largura  x 2,30 de altura, recuo superior: 0,50M, recuo inferior 1,80M ",
+                  "descricao": "Bola de Volei De Praia ",
                   "unidade_medida": "UN",
-                  "quantidade": 2,
+                  "quantidade": 5,
                   "valor_custeio_emenda": 0,
                   "valor_investimento_emenda": 1,
                   "valor_custeio_proprio": 0,
@@ -38319,19 +38358,6 @@
               },
               "metas": [
                 {
-                  "id": 122880,
-                  "sequencial": 9,
-                  "nome": "Meta 9",
-                  "descricao": "Ampliação do sistema de abastecimento de água na zona urbana no Distrito de Vila de Laranja da Terra - CAPTAÇÃO",
-                  "unidade_medida": "UN",
-                  "quantidade": 1,
-                  "valor_custeio_emenda": 0,
-                  "valor_investimento_emenda": 32789.48,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
                   "id": 122876,
                   "sequencial": 5,
                   "nome": "Meta 5",
@@ -38353,6 +38379,19 @@
                   "quantidade": 35,
                   "valor_custeio_emenda": 0,
                   "valor_investimento_emenda": 5600,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
+                  "id": 122880,
+                  "sequencial": 9,
+                  "nome": "Meta 9",
+                  "descricao": "Ampliação do sistema de abastecimento de água na zona urbana no Distrito de Vila de Laranja da Terra - CAPTAÇÃO",
+                  "unidade_medida": "UN",
+                  "quantidade": 1,
+                  "valor_custeio_emenda": 0,
+                  "valor_investimento_emenda": 32789.48,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
                   "prazo_meses": 36
@@ -38870,19 +38909,6 @@
                   "prazo_meses": 24
                 },
                 {
-                  "id": 124431,
-                  "sequencial": 6,
-                  "nome": "Meta 6",
-                  "descricao": "AQUISIÇÃO DE PRENSA MANUAL, C/ COLUNA DUPLA",
-                  "unidade_medida": "UN",
-                  "quantidade": 1,
-                  "valor_custeio_emenda": 0,
-                  "valor_investimento_emenda": 10000,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 24
-                },
-                {
                   "id": 124433,
                   "sequencial": 8,
                   "nome": "Meta 8",
@@ -38900,6 +38926,19 @@
                   "sequencial": 9,
                   "nome": "Meta 9",
                   "descricao": "AQUISIÇÃO DE PENEIRA ELÉTRICA EM CHAPA EM FERRO",
+                  "unidade_medida": "UN",
+                  "quantidade": 1,
+                  "valor_custeio_emenda": 0,
+                  "valor_investimento_emenda": 10000,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 24
+                },
+                {
+                  "id": 124431,
+                  "sequencial": 6,
+                  "nome": "Meta 6",
+                  "descricao": "AQUISIÇÃO DE PRENSA MANUAL, C/ COLUNA DUPLA",
                   "unidade_medida": "UN",
                   "quantidade": 1,
                   "valor_custeio_emenda": 0,
@@ -39313,19 +39352,6 @@
                   "prazo_meses": 36
                 },
                 {
-                  "id": 106343,
-                  "sequencial": 10,
-                  "nome": "Meta 10",
-                  "descricao": "Plantadeira/Adubadeira (Com 01 linha de Plantio/Adubação)",
-                  "unidade_medida": "UN",
-                  "quantidade": 1,
-                  "valor_custeio_emenda": 0,
-                  "valor_investimento_emenda": 6403,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
                   "id": 106342,
                   "sequencial": 9,
                   "nome": "Meta 9",
@@ -39334,6 +39360,19 @@
                   "quantidade": 1,
                   "valor_custeio_emenda": 0,
                   "valor_investimento_emenda": 16068,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
+                  "id": 106343,
+                  "sequencial": 10,
+                  "nome": "Meta 10",
+                  "descricao": "Plantadeira/Adubadeira (Com 01 linha de Plantio/Adubação)",
+                  "unidade_medida": "UN",
+                  "quantidade": 1,
+                  "valor_custeio_emenda": 0,
+                  "valor_investimento_emenda": 6403,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
                   "prazo_meses": 36
@@ -40777,25 +40816,25 @@
                   "prazo_meses": 36
                 },
                 {
-                  "id": 120571,
-                  "sequencial": 15,
-                  "nome": "Meta 15",
-                  "descricao": "Cones de sinalização",
+                  "id": 120189,
+                  "sequencial": 6,
+                  "nome": "Meta 6",
+                  "descricao": "Bola de handebol",
                   "unidade_medida": "UN",
-                  "quantidade": 200,
-                  "valor_custeio_emenda": 3000,
+                  "quantidade": 30,
+                  "valor_custeio_emenda": 3750,
                   "valor_investimento_emenda": 0,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
                   "prazo_meses": 36
                 },
                 {
-                  "id": 120572,
-                  "sequencial": 16,
-                  "nome": "Meta 16",
-                  "descricao": "Estacas + fitas para demarcação",
+                  "id": 120190,
+                  "sequencial": 7,
+                  "nome": "Meta 7",
+                  "descricao": "Colete numerado (diversas cores)",
                   "unidade_medida": "UN",
-                  "quantidade": 50,
+                  "quantidade": 100,
                   "valor_custeio_emenda": 5000,
                   "valor_investimento_emenda": 0,
                   "valor_custeio_proprio": 0,
@@ -40803,13 +40842,13 @@
                   "prazo_meses": 36
                 },
                 {
-                  "id": 120573,
-                  "sequencial": 17,
-                  "nome": "Meta 17",
-                  "descricao": "Apitos profissionais",
+                  "id": 120569,
+                  "sequencial": 13,
+                  "nome": "Meta 13",
+                  "descricao": "Traves móveis de futsal (metal)",
                   "unidade_medida": "UN",
-                  "quantidade": 20,
-                  "valor_custeio_emenda": 500,
+                  "quantidade": 10,
+                  "valor_custeio_emenda": 10000,
                   "valor_investimento_emenda": 0,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
@@ -40862,32 +40901,6 @@
                   "unidade_medida": "UN",
                   "quantidade": 35,
                   "valor_custeio_emenda": 4375,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
-                  "id": 120189,
-                  "sequencial": 6,
-                  "nome": "Meta 6",
-                  "descricao": "Bola de handebol",
-                  "unidade_medida": "UN",
-                  "quantidade": 30,
-                  "valor_custeio_emenda": 3750,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
-                  "id": 120190,
-                  "sequencial": 7,
-                  "nome": "Meta 7",
-                  "descricao": "Colete numerado (diversas cores)",
-                  "unidade_medida": "UN",
-                  "quantidade": 100,
-                  "valor_custeio_emenda": 5000,
                   "valor_investimento_emenda": 0,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
@@ -40959,19 +40972,6 @@
                   "prazo_meses": 36
                 },
                 {
-                  "id": 120569,
-                  "sequencial": 13,
-                  "nome": "Meta 13",
-                  "descricao": "Traves móveis de futsal (metal)",
-                  "unidade_medida": "UN",
-                  "quantidade": 10,
-                  "valor_custeio_emenda": 10000,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
                   "id": 120570,
                   "sequencial": 14,
                   "nome": "Meta 14",
@@ -40979,6 +40979,45 @@
                   "unidade_medida": "UN",
                   "quantidade": 10,
                   "valor_custeio_emenda": 6500,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
+                  "id": 120571,
+                  "sequencial": 15,
+                  "nome": "Meta 15",
+                  "descricao": "Cones de sinalização",
+                  "unidade_medida": "UN",
+                  "quantidade": 200,
+                  "valor_custeio_emenda": 3000,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
+                  "id": 120572,
+                  "sequencial": 16,
+                  "nome": "Meta 16",
+                  "descricao": "Estacas + fitas para demarcação",
+                  "unidade_medida": "UN",
+                  "quantidade": 50,
+                  "valor_custeio_emenda": 5000,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
+                  "id": 120573,
+                  "sequencial": 17,
+                  "nome": "Meta 17",
+                  "descricao": "Apitos profissionais",
+                  "unidade_medida": "UN",
+                  "quantidade": 20,
+                  "valor_custeio_emenda": 500,
                   "valor_investimento_emenda": 0,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
@@ -45375,19 +45414,6 @@
               },
               "metas": [
                 {
-                  "id": 102585,
-                  "sequencial": 2,
-                  "nome": "Meta 2",
-                  "descricao": "Réveillon de Rua de São Roque do Canaã - Shows Musicais com artistas regionais nos dia 31/01/2025 e 01/01/2026 (à partir das 21:00 do dia 31/12/2025 à 04:00 do dia 01/01/2026)",
-                  "unidade_medida": "OUTR",
-                  "quantidade": 1,
-                  "valor_custeio_emenda": 95000,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 12
-                },
-                {
                   "id": 84400,
                   "sequencial": 1,
                   "nome": "Meta 1",
@@ -45425,6 +45451,19 @@
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
                   "prazo_meses": 36
+                },
+                {
+                  "id": 102585,
+                  "sequencial": 2,
+                  "nome": "Meta 2",
+                  "descricao": "Réveillon de Rua de São Roque do Canaã - Shows Musicais com artistas regionais nos dia 31/01/2025 e 01/01/2026 (à partir das 21:00 do dia 31/12/2025 à 04:00 do dia 01/01/2026)",
+                  "unidade_medida": "OUTR",
+                  "quantidade": 1,
+                  "valor_custeio_emenda": 95000,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 12
                 },
                 {
                   "id": 102586,
@@ -47634,6 +47673,19 @@
                   "prazo_meses": 36
                 },
                 {
+                  "id": 122179,
+                  "sequencial": 7,
+                  "nome": "Meta 7",
+                  "descricao": "Agulha descartável 40x12",
+                  "unidade_medida": "UN",
+                  "quantidade": 25000,
+                  "valor_custeio_emenda": 5425,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
                   "id": 122175,
                   "sequencial": 3,
                   "nome": "Meta 3",
@@ -47680,19 +47732,6 @@
                   "unidade_medida": "UN",
                   "quantidade": 15000,
                   "valor_custeio_emenda": 2943,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
-                  "id": 122179,
-                  "sequencial": 7,
-                  "nome": "Meta 7",
-                  "descricao": "Agulha descartável 40x12",
-                  "unidade_medida": "UN",
-                  "quantidade": 25000,
-                  "valor_custeio_emenda": 5425,
                   "valor_investimento_emenda": 0,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
@@ -48050,6 +48089,19 @@
                   "prazo_meses": 36
                 },
                 {
+                  "id": 122224,
+                  "sequencial": 52,
+                  "nome": "Meta 52",
+                  "descricao": "Esparadrapo Comum Rolo 10 cm x 4,5 m ",
+                  "unidade_medida": "UN",
+                  "quantidade": 800,
+                  "valor_custeio_emenda": 5912,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
                   "id": 122207,
                   "sequencial": 35,
                   "nome": "Meta 35",
@@ -48167,6 +48219,19 @@
                   "prazo_meses": 36
                 },
                 {
+                  "id": 122223,
+                  "sequencial": 51,
+                  "nome": "Meta 51",
+                  "descricao": "Equipo p/ Bomba de infusão fotossensível ",
+                  "unidade_medida": "UN",
+                  "quantidade": 150,
+                  "valor_custeio_emenda": 3000,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
                   "id": 122216,
                   "sequencial": 44,
                   "nome": "Meta 44",
@@ -48245,6 +48310,19 @@
                   "prazo_meses": 36
                 },
                 {
+                  "id": 122226,
+                  "sequencial": 54,
+                  "nome": "Meta 54",
+                  "descricao": "Fio de Mononylon 3-0 cor preto com agulha 3/8 circulo corte reverso 30mm,comp.45cm",
+                  "unidade_medida": "UN",
+                  "quantidade": 480,
+                  "valor_custeio_emenda": 628.8,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
                   "id": 122222,
                   "sequencial": 50,
                   "nome": "Meta 50",
@@ -48258,32 +48336,6 @@
                   "prazo_meses": 36
                 },
                 {
-                  "id": 122223,
-                  "sequencial": 51,
-                  "nome": "Meta 51",
-                  "descricao": "Equipo p/ Bomba de infusão fotossensível ",
-                  "unidade_medida": "UN",
-                  "quantidade": 150,
-                  "valor_custeio_emenda": 3000,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
-                  "id": 122224,
-                  "sequencial": 52,
-                  "nome": "Meta 52",
-                  "descricao": "Esparadrapo Comum Rolo 10 cm x 4,5 m ",
-                  "unidade_medida": "UN",
-                  "quantidade": 800,
-                  "valor_custeio_emenda": 5912,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
                   "id": 122225,
                   "sequencial": 53,
                   "nome": "Meta 53",
@@ -48291,19 +48343,6 @@
                   "unidade_medida": "UN",
                   "quantidade": 500,
                   "valor_custeio_emenda": 1250,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
-                  "id": 122226,
-                  "sequencial": 54,
-                  "nome": "Meta 54",
-                  "descricao": "Fio de Mononylon 3-0 cor preto com agulha 3/8 circulo corte reverso 30mm,comp.45cm",
-                  "unidade_medida": "UN",
-                  "quantidade": 480,
-                  "valor_custeio_emenda": 628.8,
                   "valor_investimento_emenda": 0,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
@@ -48505,19 +48544,6 @@
                   "prazo_meses": 36
                 },
                 {
-                  "id": 122244,
-                  "sequencial": 72,
-                  "nome": "Meta 72",
-                  "descricao": "Malha tubular 6cm ",
-                  "unidade_medida": "UN",
-                  "quantidade": 30,
-                  "valor_custeio_emenda": 402,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
                   "id": 122242,
                   "sequencial": 70,
                   "nome": "Meta 70",
@@ -48538,6 +48564,19 @@
                   "unidade_medida": "UN",
                   "quantidade": 20,
                   "valor_custeio_emenda": 211,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
+                  "id": 122244,
+                  "sequencial": 72,
+                  "nome": "Meta 72",
+                  "descricao": "Malha tubular 6cm ",
+                  "unidade_medida": "UN",
+                  "quantidade": 30,
+                  "valor_custeio_emenda": 402,
                   "valor_investimento_emenda": 0,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
@@ -48765,19 +48804,6 @@
                   "prazo_meses": 36
                 },
                 {
-                  "id": 122277,
-                  "sequencial": 105,
-                  "nome": "Meta 105",
-                  "descricao": "Tala Aluminio (12x80mm)",
-                  "unidade_medida": "UN",
-                  "quantidade": 10,
-                  "valor_custeio_emenda": 6.5,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
                   "id": 122263,
                   "sequencial": 91,
                   "nome": "Meta 91",
@@ -48960,6 +48986,19 @@
                   "prazo_meses": 36
                 },
                 {
+                  "id": 122277,
+                  "sequencial": 105,
+                  "nome": "Meta 105",
+                  "descricao": "Tala Aluminio (12x80mm)",
+                  "unidade_medida": "UN",
+                  "quantidade": 10,
+                  "valor_custeio_emenda": 6.5,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
                   "id": 122278,
                   "sequencial": 106,
                   "nome": "Meta 106",
@@ -49129,6 +49168,19 @@
                   "prazo_meses": 36
                 },
                 {
+                  "id": 122291,
+                  "sequencial": 119,
+                  "nome": "Meta 119",
+                  "descricao": "Tubo Traqueal 9.0 com balão",
+                  "unidade_medida": "UN",
+                  "quantidade": 20,
+                  "valor_custeio_emenda": 67.8,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
                   "id": 122292,
                   "sequencial": 120,
                   "nome": "Meta 120",
@@ -49149,19 +49201,6 @@
                   "unidade_medida": "FR",
                   "quantidade": 200,
                   "valor_custeio_emenda": 852,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
-                  "id": 122291,
-                  "sequencial": 119,
-                  "nome": "Meta 119",
-                  "descricao": "Tubo Traqueal 9.0 com balão",
-                  "unidade_medida": "UN",
-                  "quantidade": 20,
-                  "valor_custeio_emenda": 67.8,
                   "valor_investimento_emenda": 0,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
@@ -49415,19 +49454,6 @@
                   "prazo_meses": 36
                 },
                 {
-                  "id": 122347,
-                  "sequencial": 145,
-                  "nome": "Meta 145",
-                  "descricao": "Claritromicina 500mg EV frasco ampola",
-                  "unidade_medida": "FR-AM",
-                  "quantidade": 100,
-                  "valor_custeio_emenda": 2184,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
                   "id": 122344,
                   "sequencial": 142,
                   "nome": "Meta 142",
@@ -49467,13 +49493,13 @@
                   "prazo_meses": 36
                 },
                 {
-                  "id": 122379,
-                  "sequencial": 177,
-                  "nome": "Meta 177",
-                  "descricao": "Haloperidol 5mg ampola 1ml",
-                  "unidade_medida": "AM",
-                  "quantidade": 200,
-                  "valor_custeio_emenda": 336,
+                  "id": 122347,
+                  "sequencial": 145,
+                  "nome": "Meta 145",
+                  "descricao": "Claritromicina 500mg EV frasco ampola",
+                  "unidade_medida": "FR-AM",
+                  "quantidade": 100,
+                  "valor_custeio_emenda": 2184,
                   "valor_investimento_emenda": 0,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
@@ -49864,6 +49890,19 @@
                   "unidade_medida": "FLAC",
                   "quantidade": 7000,
                   "valor_custeio_emenda": 3710,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
+                  "id": 122379,
+                  "sequencial": 177,
+                  "nome": "Meta 177",
+                  "descricao": "Haloperidol 5mg ampola 1ml",
+                  "unidade_medida": "AM",
+                  "quantidade": 200,
+                  "valor_custeio_emenda": 336,
                   "valor_investimento_emenda": 0,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
@@ -50286,19 +50325,6 @@
                   "prazo_meses": 36
                 },
                 {
-                  "id": 122415,
-                  "sequencial": 213,
-                  "nome": "Meta 213",
-                  "descricao": "Solução Cloreto de Sódio 0,9% 100 ml",
-                  "unidade_medida": "FR",
-                  "quantidade": 7000,
-                  "valor_custeio_emenda": 25060,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
                   "id": 122412,
                   "sequencial": 210,
                   "nome": "Meta 210",
@@ -50332,6 +50358,19 @@
                   "unidade_medida": "FLAC",
                   "quantidade": 15000,
                   "valor_custeio_emenda": 3600,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
+                  "id": 122415,
+                  "sequencial": 213,
+                  "nome": "Meta 213",
+                  "descricao": "Solução Cloreto de Sódio 0,9% 100 ml",
+                  "unidade_medida": "FR",
+                  "quantidade": 7000,
+                  "valor_custeio_emenda": 25060,
                   "valor_investimento_emenda": 0,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
@@ -51015,19 +51054,6 @@
                   "prazo_meses": 36
                 },
                 {
-                  "id": 44796,
-                  "sequencial": 6,
-                  "nome": "Meta 6",
-                  "descricao": "GND 4: Computador completo para viabilizar e intensificar os atendimentos no CRAS;",
-                  "unidade_medida": "UN",
-                  "quantidade": 3,
-                  "valor_custeio_emenda": 0,
-                  "valor_investimento_emenda": 6000,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
                   "id": 310,
                   "sequencial": 2,
                   "nome": "Meta 2",
@@ -51062,6 +51088,19 @@
                   "quantidade": 1,
                   "valor_custeio_emenda": 0,
                   "valor_investimento_emenda": 3290,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
+                  "id": 44796,
+                  "sequencial": 6,
+                  "nome": "Meta 6",
+                  "descricao": "GND 4: Computador completo para viabilizar e intensificar os atendimentos no CRAS;",
+                  "unidade_medida": "UN",
+                  "quantidade": 3,
+                  "valor_custeio_emenda": 0,
+                  "valor_investimento_emenda": 6000,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
                   "prazo_meses": 36
@@ -54420,32 +54459,6 @@
                   "prazo_meses": 1
                 },
                 {
-                  "id": 82134,
-                  "sequencial": 5,
-                  "nome": "Meta 5",
-                  "descricao": "Equipamentos de medição e instrumentação (Trenas: laser, rodinha, fibra de vidro 30m, trena metálica 50m)",
-                  "unidade_medida": "UN",
-                  "quantidade": 10,
-                  "valor_custeio_emenda": 0,
-                  "valor_investimento_emenda": 7000,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 2
-                },
-                {
-                  "id": 82135,
-                  "sequencial": 6,
-                  "nome": "Meta 6",
-                  "descricao": "Instrumentos técnicos de precisão (Paquímetro digital, fissurômetro, alicate ampímetro, alicate terrômetro, fasímentro, milimetro)",
-                  "unidade_medida": "UN",
-                  "quantidade": 7,
-                  "valor_custeio_emenda": 0,
-                  "valor_investimento_emenda": 10000,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 2
-                },
-                {
                   "id": 81656,
                   "sequencial": 2,
                   "nome": "Meta 2",
@@ -54467,6 +54480,32 @@
                   "quantidade": 1,
                   "valor_custeio_emenda": 0,
                   "valor_investimento_emenda": 2000,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 2
+                },
+                {
+                  "id": 82134,
+                  "sequencial": 5,
+                  "nome": "Meta 5",
+                  "descricao": "Equipamentos de medição e instrumentação (Trenas: laser, rodinha, fibra de vidro 30m, trena metálica 50m)",
+                  "unidade_medida": "UN",
+                  "quantidade": 10,
+                  "valor_custeio_emenda": 0,
+                  "valor_investimento_emenda": 7000,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 2
+                },
+                {
+                  "id": 82135,
+                  "sequencial": 6,
+                  "nome": "Meta 6",
+                  "descricao": "Instrumentos técnicos de precisão (Paquímetro digital, fissurômetro, alicate ampímetro, alicate terrômetro, fasímentro, milimetro)",
+                  "unidade_medida": "UN",
+                  "quantidade": 7,
+                  "valor_custeio_emenda": 0,
+                  "valor_investimento_emenda": 10000,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
                   "prazo_meses": 2
@@ -54573,6 +54612,19 @@
                   "prazo_meses": 1
                 },
                 {
+                  "id": 75554,
+                  "sequencial": 13,
+                  "nome": "Meta 13",
+                  "descricao": "Aparelhos elétricos (Aquisição e instalação de equipamentos elétricos)",
+                  "unidade_medida": "UN",
+                  "quantidade": 1,
+                  "valor_custeio_emenda": 0,
+                  "valor_investimento_emenda": 2919.88,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 1
+                },
+                {
                   "id": 75550,
                   "sequencial": 9,
                   "nome": "Meta 9",
@@ -54623,19 +54675,6 @@
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
                   "prazo_meses": 3
-                },
-                {
-                  "id": 75554,
-                  "sequencial": 13,
-                  "nome": "Meta 13",
-                  "descricao": "Aparelhos elétricos (Aquisição e instalação de equipamentos elétricos)",
-                  "unidade_medida": "UN",
-                  "quantidade": 1,
-                  "valor_custeio_emenda": 0,
-                  "valor_investimento_emenda": 2919.88,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 1
                 },
                 {
                   "id": 75555,
@@ -63086,6 +63125,19 @@
                   "prazo_meses": 36
                 },
                 {
+                  "id": 75053,
+                  "sequencial": 6,
+                  "nome": "Meta 6",
+                  "descricao": "Tubos de concreto armado 60cmX2,00m",
+                  "unidade_medida": "UN",
+                  "quantidade": 62,
+                  "valor_custeio_emenda": 31000,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
                   "id": 75051,
                   "sequencial": 4,
                   "nome": "Meta 4",
@@ -63093,19 +63145,6 @@
                   "unidade_medida": "UN",
                   "quantidade": 30,
                   "valor_custeio_emenda": 23100,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
-                  "id": 75052,
-                  "sequencial": 5,
-                  "nome": "Meta 5",
-                  "descricao": "Tubo de concreto armado 100cmX1,00m",
-                  "unidade_medida": "UN",
-                  "quantidade": 62,
-                  "valor_custeio_emenda": 24769,
                   "valor_investimento_emenda": 0,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
@@ -63125,13 +63164,13 @@
                   "prazo_meses": 36
                 },
                 {
-                  "id": 75053,
-                  "sequencial": 6,
-                  "nome": "Meta 6",
-                  "descricao": "Tubos de concreto armado 60cmX2,00m",
+                  "id": 75052,
+                  "sequencial": 5,
+                  "nome": "Meta 5",
+                  "descricao": "Tubo de concreto armado 100cmX1,00m",
                   "unidade_medida": "UN",
                   "quantidade": 62,
-                  "valor_custeio_emenda": 31000,
+                  "valor_custeio_emenda": 24769,
                   "valor_investimento_emenda": 0,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
@@ -64973,19 +65012,6 @@
               },
               "metas": [
                 {
-                  "id": 59505,
-                  "sequencial": 6,
-                  "nome": "Meta 6",
-                  "descricao": "Cabo de cobre flexível 2.5mm² (peça com 100 metros)",
-                  "unidade_medida": "UN",
-                  "quantidade": 100,
-                  "valor_custeio_emenda": 10900,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
                   "id": 6682,
                   "sequencial": 1,
                   "nome": "Meta 1",
@@ -65012,6 +65038,19 @@
                   "prazo_meses": 36
                 },
                 {
+                  "id": 59505,
+                  "sequencial": 6,
+                  "nome": "Meta 6",
+                  "descricao": "Cabo de cobre flexível 2.5mm² (peça com 100 metros)",
+                  "unidade_medida": "UN",
+                  "quantidade": 100,
+                  "valor_custeio_emenda": 10900,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
                   "id": 59506,
                   "sequencial": 7,
                   "nome": "Meta 7",
@@ -65025,19 +65064,6 @@
                   "prazo_meses": 36
                 },
                 {
-                  "id": 59520,
-                  "sequencial": 21,
-                  "nome": "Meta 21",
-                  "descricao": "Calça em tecido feminina para servidoras da SEMIUBR",
-                  "unidade_medida": "UN",
-                  "quantidade": 280,
-                  "valor_custeio_emenda": 15120,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
                   "id": 59521,
                   "sequencial": 22,
                   "nome": "Meta 22",
@@ -65045,6 +65071,19 @@
                   "unidade_medida": "UN",
                   "quantidade": 375,
                   "valor_custeio_emenda": 20208.75,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
+                  "id": 59520,
+                  "sequencial": 21,
+                  "nome": "Meta 21",
+                  "descricao": "Calça em tecido feminina para servidoras da SEMIUBR",
+                  "unidade_medida": "UN",
+                  "quantidade": 280,
+                  "valor_custeio_emenda": 15120,
                   "valor_investimento_emenda": 0,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
@@ -66190,6 +66229,19 @@
                   "prazo_meses": 1
                 },
                 {
+                  "id": 75554,
+                  "sequencial": 13,
+                  "nome": "Meta 13",
+                  "descricao": "Aparelhos elétricos (Aquisição e instalação de equipamentos elétricos)",
+                  "unidade_medida": "UN",
+                  "quantidade": 1,
+                  "valor_custeio_emenda": 0,
+                  "valor_investimento_emenda": 2919.88,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 1
+                },
+                {
                   "id": 75550,
                   "sequencial": 9,
                   "nome": "Meta 9",
@@ -66240,19 +66292,6 @@
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
                   "prazo_meses": 3
-                },
-                {
-                  "id": 75554,
-                  "sequencial": 13,
-                  "nome": "Meta 13",
-                  "descricao": "Aparelhos elétricos (Aquisição e instalação de equipamentos elétricos)",
-                  "unidade_medida": "UN",
-                  "quantidade": 1,
-                  "valor_custeio_emenda": 0,
-                  "valor_investimento_emenda": 2919.88,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 1
                 },
                 {
                   "id": 75555,
@@ -66483,19 +66522,6 @@
               },
               "metas": [
                 {
-                  "id": 13413,
-                  "sequencial": 2,
-                  "nome": "Meta 2",
-                  "descricao": "Modernização do campo de Prosperidade - arquibancada e vestiário",
-                  "unidade_medida": "UN",
-                  "quantidade": 1,
-                  "valor_custeio_emenda": 0,
-                  "valor_investimento_emenda": 500000,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
                   "id": 13412,
                   "sequencial": 1,
                   "nome": "Meta 1",
@@ -66504,6 +66530,19 @@
                   "quantidade": 1,
                   "valor_custeio_emenda": 0,
                   "valor_investimento_emenda": 1000000,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
+                  "id": 13413,
+                  "sequencial": 2,
+                  "nome": "Meta 2",
+                  "descricao": "Modernização do campo de Prosperidade - arquibancada e vestiário",
+                  "unidade_medida": "UN",
+                  "quantidade": 1,
+                  "valor_custeio_emenda": 0,
+                  "valor_investimento_emenda": 500000,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
                   "prazo_meses": 36
@@ -69704,19 +69743,6 @@
                   "prazo_meses": 36
                 },
                 {
-                  "id": 44796,
-                  "sequencial": 6,
-                  "nome": "Meta 6",
-                  "descricao": "GND 4: Computador completo para viabilizar e intensificar os atendimentos no CRAS;",
-                  "unidade_medida": "UN",
-                  "quantidade": 3,
-                  "valor_custeio_emenda": 0,
-                  "valor_investimento_emenda": 6000,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
                   "id": 310,
                   "sequencial": 2,
                   "nome": "Meta 2",
@@ -69751,6 +69777,19 @@
                   "quantidade": 1,
                   "valor_custeio_emenda": 0,
                   "valor_investimento_emenda": 3290,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
+                  "id": 44796,
+                  "sequencial": 6,
+                  "nome": "Meta 6",
+                  "descricao": "GND 4: Computador completo para viabilizar e intensificar os atendimentos no CRAS;",
+                  "unidade_medida": "UN",
+                  "quantidade": 3,
+                  "valor_custeio_emenda": 0,
+                  "valor_investimento_emenda": 6000,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
                   "prazo_meses": 36
@@ -75064,6 +75103,45 @@
               },
               "metas": [
                 {
+                  "id": 124925,
+                  "sequencial": 7,
+                  "nome": "Meta 7",
+                  "descricao": "fita de Ginática ",
+                  "unidade_medida": "UN",
+                  "quantidade": 20,
+                  "valor_custeio_emenda": 0,
+                  "valor_investimento_emenda": 1,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
+                  "id": 124926,
+                  "sequencial": 8,
+                  "nome": "Meta 8",
+                  "descricao": "Bola de Volley ",
+                  "unidade_medida": "UN",
+                  "quantidade": 40,
+                  "valor_custeio_emenda": 0,
+                  "valor_investimento_emenda": 1,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
+                  "id": 124927,
+                  "sequencial": 9,
+                  "nome": "Meta 9",
+                  "descricao": "Jogo de Rede de Futebol de Campo ",
+                  "unidade_medida": "UN",
+                  "quantidade": 1,
+                  "valor_custeio_emenda": 0,
+                  "valor_investimento_emenda": 1,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
                   "id": 43720,
                   "sequencial": 1,
                   "nome": "Meta 1",
@@ -75071,7 +75149,7 @@
                   "unidade_medida": "UN",
                   "quantidade": 1,
                   "valor_custeio_emenda": 0,
-                  "valor_investimento_emenda": 158276.83,
+                  "valor_investimento_emenda": 158273.83,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
                   "prazo_meses": 36
@@ -75093,9 +75171,9 @@
                   "id": 124780,
                   "sequencial": 6,
                   "nome": "Meta 6",
-                  "descricao": "Rede em polietileno com tratamento anti-UV, malha 15x15cm,  Fio 3, com medidas específicas 5,50m de largura x 2,30 de  altura, recuo superior: 0,50M, recuo inferior 1,80M ",
+                  "descricao": "Bola de Ginástica",
                   "unidade_medida": "UN",
-                  "quantidade": 3,
+                  "quantidade": 31,
                   "valor_custeio_emenda": 0,
                   "valor_investimento_emenda": 1,
                   "valor_custeio_proprio": 0,
@@ -75106,9 +75184,9 @@
                   "id": 124777,
                   "sequencial": 3,
                   "nome": "Meta 3",
-                  "descricao": "Bola de Futevôlei oficial Material: Poliuretano Laminado de  PU Circunferência: entre 62 a 64 cm Peso: entre 260 a 280  gramas. Tamanho: 5. Pressão:  entre 8 e 9 psi.",
+                  "descricao": "Bambole",
                   "unidade_medida": "UN",
-                  "quantidade": 30,
+                  "quantidade": 20,
                   "valor_custeio_emenda": 0,
                   "valor_investimento_emenda": 1,
                   "valor_custeio_proprio": 0,
@@ -75119,9 +75197,9 @@
                   "id": 124778,
                   "sequencial": 4,
                   "nome": "Meta 4",
-                  "descricao": "Bola de Beach Soccer oficial Material: Poliuretano  Laminado de PU Circunferência: entre 68 a 70 cm Peso:  entre 400 a 440 gramas. Tamanho: 5. Pressão:  entre 6 e 8  psi.",
+                  "descricao": "Bola de Futebol de Campo ",
                   "unidade_medida": "UN",
-                  "quantidade": 30,
+                  "quantidade": 22,
                   "valor_custeio_emenda": 0,
                   "valor_investimento_emenda": 1,
                   "valor_custeio_proprio": 0,
@@ -75132,9 +75210,9 @@
                   "id": 124779,
                   "sequencial": 5,
                   "nome": "Meta 5",
-                  "descricao": "Rede em polietileno com tratamento anti-UV, malha  15x15cm, Fio 3, com medidas específicas 5,50m de largura  x 2,30 de altura, recuo superior: 0,50M, recuo inferior 1,80M ",
+                  "descricao": "Bola de Volei De Praia ",
                   "unidade_medida": "UN",
-                  "quantidade": 2,
+                  "quantidade": 5,
                   "valor_custeio_emenda": 0,
                   "valor_investimento_emenda": 1,
                   "valor_custeio_proprio": 0,
@@ -78505,19 +78583,6 @@
                   "prazo_meses": 24
                 },
                 {
-                  "id": 124431,
-                  "sequencial": 6,
-                  "nome": "Meta 6",
-                  "descricao": "AQUISIÇÃO DE PRENSA MANUAL, C/ COLUNA DUPLA",
-                  "unidade_medida": "UN",
-                  "quantidade": 1,
-                  "valor_custeio_emenda": 0,
-                  "valor_investimento_emenda": 10000,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 24
-                },
-                {
                   "id": 124433,
                   "sequencial": 8,
                   "nome": "Meta 8",
@@ -78535,6 +78600,19 @@
                   "sequencial": 9,
                   "nome": "Meta 9",
                   "descricao": "AQUISIÇÃO DE PENEIRA ELÉTRICA EM CHAPA EM FERRO",
+                  "unidade_medida": "UN",
+                  "quantidade": 1,
+                  "valor_custeio_emenda": 0,
+                  "valor_investimento_emenda": 10000,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 24
+                },
+                {
+                  "id": 124431,
+                  "sequencial": 6,
+                  "nome": "Meta 6",
+                  "descricao": "AQUISIÇÃO DE PRENSA MANUAL, C/ COLUNA DUPLA",
                   "unidade_medida": "UN",
                   "quantidade": 1,
                   "valor_custeio_emenda": 0,
@@ -78696,6 +78774,58 @@
           "nome_beneficiario": "ESTADO DO ESPIRITO SANTO",
           "executores": [
             {
+              "id": "7693",
+              "cnpj": "31752645000104",
+              "nome": "SECRETARIA DE ESTADO DE MEIO AMBIENTE E RECURSOS HDRICOS",
+              "objeto": "Integrar diversas iniciativas ambientais voltadas para a restauração florestal e a conservação da biodiversidade local.",
+              "detalhamento_objeto": "Integrar diversas iniciativas ambientais voltadas para a restauração florestal e a conservação da biodiversidade local.",
+              "situacao_plano_trabalho": "Legado ADPF 854 STF / NT-TCU",
+              "numero_plano_trabalho": "",
+              "valor_custeio": 345000,
+              "valor_investimento": 0,
+              "banco": "Caixa Econômica Federal",
+              "agencia": "167-8",
+              "conta": "6672021-6",
+              "situacao_conta": "Conta Ativa",
+              "plano": {
+                "id": "67358",
+                "codigo": "09032024-067358",
+                "situacao": "CIENTE",
+                "parlamentar": "Helder Salomão",
+                "numero_emenda": "202433120025",
+                "area_politica": "Gestão Ambiental",
+                "recurso_recebido": true
+              },
+              "metas": [
+                {
+                  "id": 11375,
+                  "sequencial": 1,
+                  "nome": "Meta 1",
+                  "descricao": "Pesquisa sobre lontras do Rio Jucu e instalação de viveiro de mudas nativas.",
+                  "unidade_medida": "UN",
+                  "quantidade": 1,
+                  "valor_custeio_emenda": 145000,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 24
+                },
+                {
+                  "id": 11376,
+                  "sequencial": 2,
+                  "nome": "Meta 2",
+                  "descricao": "Integração de Iniciativas para o Plantio de Árvores",
+                  "unidade_medida": "UN",
+                  "quantidade": 1,
+                  "valor_custeio_emenda": 200000,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 12
+                }
+              ]
+            },
+            {
               "id": "7488",
               "cnpj": "27080555000147",
               "nome": "SECRETARIA DE ESTADO DA AGRICULTURA, ABASTECIMENTO, AQUICULTURA E PESCA - SEAG",
@@ -78835,58 +78965,6 @@
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
                   "prazo_meses": 21
-                }
-              ]
-            },
-            {
-              "id": "7693",
-              "cnpj": "31752645000104",
-              "nome": "SECRETARIA DE ESTADO DE MEIO AMBIENTE E RECURSOS HDRICOS",
-              "objeto": "Integrar diversas iniciativas ambientais voltadas para a restauração florestal e a conservação da biodiversidade local.",
-              "detalhamento_objeto": "Integrar diversas iniciativas ambientais voltadas para a restauração florestal e a conservação da biodiversidade local.",
-              "situacao_plano_trabalho": "Legado ADPF 854 STF / NT-TCU",
-              "numero_plano_trabalho": "",
-              "valor_custeio": 345000,
-              "valor_investimento": 0,
-              "banco": "Caixa Econômica Federal",
-              "agencia": "167-8",
-              "conta": "6672021-6",
-              "situacao_conta": "Conta Ativa",
-              "plano": {
-                "id": "67358",
-                "codigo": "09032024-067358",
-                "situacao": "CIENTE",
-                "parlamentar": "Helder Salomão",
-                "numero_emenda": "202433120025",
-                "area_politica": "Gestão Ambiental",
-                "recurso_recebido": true
-              },
-              "metas": [
-                {
-                  "id": 11375,
-                  "sequencial": 1,
-                  "nome": "Meta 1",
-                  "descricao": "Pesquisa sobre lontras do Rio Jucu e instalação de viveiro de mudas nativas.",
-                  "unidade_medida": "UN",
-                  "quantidade": 1,
-                  "valor_custeio_emenda": 145000,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 24
-                },
-                {
-                  "id": 11376,
-                  "sequencial": 2,
-                  "nome": "Meta 2",
-                  "descricao": "Integração de Iniciativas para o Plantio de Árvores",
-                  "unidade_medida": "UN",
-                  "quantidade": 1,
-                  "valor_custeio_emenda": 200000,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 12
                 }
               ]
             },
@@ -81260,19 +81338,6 @@
                   "prazo_meses": 24
                 },
                 {
-                  "id": 96529,
-                  "sequencial": 19,
-                  "nome": "Meta 19",
-                  "descricao": "Jogos de mesa: Mesa plástica monobloco com 4 cadeiras, resistentes, empilháveis e adequados para ambientes escolares.",
-                  "unidade_medida": "UN",
-                  "quantidade": 60,
-                  "valor_custeio_emenda": 0,
-                  "valor_investimento_emenda": 14719.8,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 24
-                },
-                {
                   "id": 96522,
                   "sequencial": 12,
                   "nome": "Meta 12",
@@ -81333,6 +81398,19 @@
                   "quantidade": 2,
                   "valor_custeio_emenda": 0,
                   "valor_investimento_emenda": 1179.8,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 24
+                },
+                {
+                  "id": 96529,
+                  "sequencial": 19,
+                  "nome": "Meta 19",
+                  "descricao": "Jogos de mesa: Mesa plástica monobloco com 4 cadeiras, resistentes, empilháveis e adequados para ambientes escolares.",
+                  "unidade_medida": "UN",
+                  "quantidade": 60,
+                  "valor_custeio_emenda": 0,
+                  "valor_investimento_emenda": 14719.8,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
                   "prazo_meses": 24
@@ -82422,19 +82500,6 @@
                   "prazo_meses": 36
                 },
                 {
-                  "id": 106343,
-                  "sequencial": 10,
-                  "nome": "Meta 10",
-                  "descricao": "Plantadeira/Adubadeira (Com 01 linha de Plantio/Adubação)",
-                  "unidade_medida": "UN",
-                  "quantidade": 1,
-                  "valor_custeio_emenda": 0,
-                  "valor_investimento_emenda": 6403,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
                   "id": 106342,
                   "sequencial": 9,
                   "nome": "Meta 9",
@@ -82443,6 +82508,19 @@
                   "quantidade": 1,
                   "valor_custeio_emenda": 0,
                   "valor_investimento_emenda": 16068,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
+                  "id": 106343,
+                  "sequencial": 10,
+                  "nome": "Meta 10",
+                  "descricao": "Plantadeira/Adubadeira (Com 01 linha de Plantio/Adubação)",
+                  "unidade_medida": "UN",
+                  "quantidade": 1,
+                  "valor_custeio_emenda": 0,
+                  "valor_investimento_emenda": 6403,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
                   "prazo_meses": 36
@@ -82777,25 +82855,25 @@
                   "prazo_meses": 36
                 },
                 {
-                  "id": 120571,
-                  "sequencial": 15,
-                  "nome": "Meta 15",
-                  "descricao": "Cones de sinalização",
+                  "id": 120189,
+                  "sequencial": 6,
+                  "nome": "Meta 6",
+                  "descricao": "Bola de handebol",
                   "unidade_medida": "UN",
-                  "quantidade": 200,
-                  "valor_custeio_emenda": 3000,
+                  "quantidade": 30,
+                  "valor_custeio_emenda": 3750,
                   "valor_investimento_emenda": 0,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
                   "prazo_meses": 36
                 },
                 {
-                  "id": 120572,
-                  "sequencial": 16,
-                  "nome": "Meta 16",
-                  "descricao": "Estacas + fitas para demarcação",
+                  "id": 120190,
+                  "sequencial": 7,
+                  "nome": "Meta 7",
+                  "descricao": "Colete numerado (diversas cores)",
                   "unidade_medida": "UN",
-                  "quantidade": 50,
+                  "quantidade": 100,
                   "valor_custeio_emenda": 5000,
                   "valor_investimento_emenda": 0,
                   "valor_custeio_proprio": 0,
@@ -82803,13 +82881,13 @@
                   "prazo_meses": 36
                 },
                 {
-                  "id": 120573,
-                  "sequencial": 17,
-                  "nome": "Meta 17",
-                  "descricao": "Apitos profissionais",
+                  "id": 120569,
+                  "sequencial": 13,
+                  "nome": "Meta 13",
+                  "descricao": "Traves móveis de futsal (metal)",
                   "unidade_medida": "UN",
-                  "quantidade": 20,
-                  "valor_custeio_emenda": 500,
+                  "quantidade": 10,
+                  "valor_custeio_emenda": 10000,
                   "valor_investimento_emenda": 0,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
@@ -82862,32 +82940,6 @@
                   "unidade_medida": "UN",
                   "quantidade": 35,
                   "valor_custeio_emenda": 4375,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
-                  "id": 120189,
-                  "sequencial": 6,
-                  "nome": "Meta 6",
-                  "descricao": "Bola de handebol",
-                  "unidade_medida": "UN",
-                  "quantidade": 30,
-                  "valor_custeio_emenda": 3750,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
-                  "id": 120190,
-                  "sequencial": 7,
-                  "nome": "Meta 7",
-                  "descricao": "Colete numerado (diversas cores)",
-                  "unidade_medida": "UN",
-                  "quantidade": 100,
-                  "valor_custeio_emenda": 5000,
                   "valor_investimento_emenda": 0,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
@@ -82959,19 +83011,6 @@
                   "prazo_meses": 36
                 },
                 {
-                  "id": 120569,
-                  "sequencial": 13,
-                  "nome": "Meta 13",
-                  "descricao": "Traves móveis de futsal (metal)",
-                  "unidade_medida": "UN",
-                  "quantidade": 10,
-                  "valor_custeio_emenda": 10000,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
                   "id": 120570,
                   "sequencial": 14,
                   "nome": "Meta 14",
@@ -82979,6 +83018,45 @@
                   "unidade_medida": "UN",
                   "quantidade": 10,
                   "valor_custeio_emenda": 6500,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
+                  "id": 120571,
+                  "sequencial": 15,
+                  "nome": "Meta 15",
+                  "descricao": "Cones de sinalização",
+                  "unidade_medida": "UN",
+                  "quantidade": 200,
+                  "valor_custeio_emenda": 3000,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
+                  "id": 120572,
+                  "sequencial": 16,
+                  "nome": "Meta 16",
+                  "descricao": "Estacas + fitas para demarcação",
+                  "unidade_medida": "UN",
+                  "quantidade": 50,
+                  "valor_custeio_emenda": 5000,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
+                  "id": 120573,
+                  "sequencial": 17,
+                  "nome": "Meta 17",
+                  "descricao": "Apitos profissionais",
+                  "unidade_medida": "UN",
+                  "quantidade": 20,
+                  "valor_custeio_emenda": 500,
                   "valor_investimento_emenda": 0,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
@@ -93212,6 +93290,19 @@
                   "prazo_meses": 36
                 },
                 {
+                  "id": 122179,
+                  "sequencial": 7,
+                  "nome": "Meta 7",
+                  "descricao": "Agulha descartável 40x12",
+                  "unidade_medida": "UN",
+                  "quantidade": 25000,
+                  "valor_custeio_emenda": 5425,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
                   "id": 122175,
                   "sequencial": 3,
                   "nome": "Meta 3",
@@ -93258,19 +93349,6 @@
                   "unidade_medida": "UN",
                   "quantidade": 15000,
                   "valor_custeio_emenda": 2943,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
-                  "id": 122179,
-                  "sequencial": 7,
-                  "nome": "Meta 7",
-                  "descricao": "Agulha descartável 40x12",
-                  "unidade_medida": "UN",
-                  "quantidade": 25000,
-                  "valor_custeio_emenda": 5425,
                   "valor_investimento_emenda": 0,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
@@ -93628,6 +93706,19 @@
                   "prazo_meses": 36
                 },
                 {
+                  "id": 122224,
+                  "sequencial": 52,
+                  "nome": "Meta 52",
+                  "descricao": "Esparadrapo Comum Rolo 10 cm x 4,5 m ",
+                  "unidade_medida": "UN",
+                  "quantidade": 800,
+                  "valor_custeio_emenda": 5912,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
                   "id": 122207,
                   "sequencial": 35,
                   "nome": "Meta 35",
@@ -93745,6 +93836,19 @@
                   "prazo_meses": 36
                 },
                 {
+                  "id": 122223,
+                  "sequencial": 51,
+                  "nome": "Meta 51",
+                  "descricao": "Equipo p/ Bomba de infusão fotossensível ",
+                  "unidade_medida": "UN",
+                  "quantidade": 150,
+                  "valor_custeio_emenda": 3000,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
                   "id": 122216,
                   "sequencial": 44,
                   "nome": "Meta 44",
@@ -93823,6 +93927,19 @@
                   "prazo_meses": 36
                 },
                 {
+                  "id": 122226,
+                  "sequencial": 54,
+                  "nome": "Meta 54",
+                  "descricao": "Fio de Mononylon 3-0 cor preto com agulha 3/8 circulo corte reverso 30mm,comp.45cm",
+                  "unidade_medida": "UN",
+                  "quantidade": 480,
+                  "valor_custeio_emenda": 628.8,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
                   "id": 122222,
                   "sequencial": 50,
                   "nome": "Meta 50",
@@ -93836,32 +93953,6 @@
                   "prazo_meses": 36
                 },
                 {
-                  "id": 122223,
-                  "sequencial": 51,
-                  "nome": "Meta 51",
-                  "descricao": "Equipo p/ Bomba de infusão fotossensível ",
-                  "unidade_medida": "UN",
-                  "quantidade": 150,
-                  "valor_custeio_emenda": 3000,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
-                  "id": 122224,
-                  "sequencial": 52,
-                  "nome": "Meta 52",
-                  "descricao": "Esparadrapo Comum Rolo 10 cm x 4,5 m ",
-                  "unidade_medida": "UN",
-                  "quantidade": 800,
-                  "valor_custeio_emenda": 5912,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
                   "id": 122225,
                   "sequencial": 53,
                   "nome": "Meta 53",
@@ -93869,19 +93960,6 @@
                   "unidade_medida": "UN",
                   "quantidade": 500,
                   "valor_custeio_emenda": 1250,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
-                  "id": 122226,
-                  "sequencial": 54,
-                  "nome": "Meta 54",
-                  "descricao": "Fio de Mononylon 3-0 cor preto com agulha 3/8 circulo corte reverso 30mm,comp.45cm",
-                  "unidade_medida": "UN",
-                  "quantidade": 480,
-                  "valor_custeio_emenda": 628.8,
                   "valor_investimento_emenda": 0,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
@@ -94083,19 +94161,6 @@
                   "prazo_meses": 36
                 },
                 {
-                  "id": 122244,
-                  "sequencial": 72,
-                  "nome": "Meta 72",
-                  "descricao": "Malha tubular 6cm ",
-                  "unidade_medida": "UN",
-                  "quantidade": 30,
-                  "valor_custeio_emenda": 402,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
                   "id": 122242,
                   "sequencial": 70,
                   "nome": "Meta 70",
@@ -94116,6 +94181,19 @@
                   "unidade_medida": "UN",
                   "quantidade": 20,
                   "valor_custeio_emenda": 211,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
+                  "id": 122244,
+                  "sequencial": 72,
+                  "nome": "Meta 72",
+                  "descricao": "Malha tubular 6cm ",
+                  "unidade_medida": "UN",
+                  "quantidade": 30,
+                  "valor_custeio_emenda": 402,
                   "valor_investimento_emenda": 0,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
@@ -94343,19 +94421,6 @@
                   "prazo_meses": 36
                 },
                 {
-                  "id": 122277,
-                  "sequencial": 105,
-                  "nome": "Meta 105",
-                  "descricao": "Tala Aluminio (12x80mm)",
-                  "unidade_medida": "UN",
-                  "quantidade": 10,
-                  "valor_custeio_emenda": 6.5,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
                   "id": 122263,
                   "sequencial": 91,
                   "nome": "Meta 91",
@@ -94538,6 +94603,19 @@
                   "prazo_meses": 36
                 },
                 {
+                  "id": 122277,
+                  "sequencial": 105,
+                  "nome": "Meta 105",
+                  "descricao": "Tala Aluminio (12x80mm)",
+                  "unidade_medida": "UN",
+                  "quantidade": 10,
+                  "valor_custeio_emenda": 6.5,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
                   "id": 122278,
                   "sequencial": 106,
                   "nome": "Meta 106",
@@ -94707,6 +94785,19 @@
                   "prazo_meses": 36
                 },
                 {
+                  "id": 122291,
+                  "sequencial": 119,
+                  "nome": "Meta 119",
+                  "descricao": "Tubo Traqueal 9.0 com balão",
+                  "unidade_medida": "UN",
+                  "quantidade": 20,
+                  "valor_custeio_emenda": 67.8,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
                   "id": 122292,
                   "sequencial": 120,
                   "nome": "Meta 120",
@@ -94727,19 +94818,6 @@
                   "unidade_medida": "FR",
                   "quantidade": 200,
                   "valor_custeio_emenda": 852,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
-                  "id": 122291,
-                  "sequencial": 119,
-                  "nome": "Meta 119",
-                  "descricao": "Tubo Traqueal 9.0 com balão",
-                  "unidade_medida": "UN",
-                  "quantidade": 20,
-                  "valor_custeio_emenda": 67.8,
                   "valor_investimento_emenda": 0,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
@@ -94993,19 +95071,6 @@
                   "prazo_meses": 36
                 },
                 {
-                  "id": 122347,
-                  "sequencial": 145,
-                  "nome": "Meta 145",
-                  "descricao": "Claritromicina 500mg EV frasco ampola",
-                  "unidade_medida": "FR-AM",
-                  "quantidade": 100,
-                  "valor_custeio_emenda": 2184,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
                   "id": 122344,
                   "sequencial": 142,
                   "nome": "Meta 142",
@@ -95045,13 +95110,13 @@
                   "prazo_meses": 36
                 },
                 {
-                  "id": 122379,
-                  "sequencial": 177,
-                  "nome": "Meta 177",
-                  "descricao": "Haloperidol 5mg ampola 1ml",
-                  "unidade_medida": "AM",
-                  "quantidade": 200,
-                  "valor_custeio_emenda": 336,
+                  "id": 122347,
+                  "sequencial": 145,
+                  "nome": "Meta 145",
+                  "descricao": "Claritromicina 500mg EV frasco ampola",
+                  "unidade_medida": "FR-AM",
+                  "quantidade": 100,
+                  "valor_custeio_emenda": 2184,
                   "valor_investimento_emenda": 0,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
@@ -95442,6 +95507,19 @@
                   "unidade_medida": "FLAC",
                   "quantidade": 7000,
                   "valor_custeio_emenda": 3710,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
+                  "id": 122379,
+                  "sequencial": 177,
+                  "nome": "Meta 177",
+                  "descricao": "Haloperidol 5mg ampola 1ml",
+                  "unidade_medida": "AM",
+                  "quantidade": 200,
+                  "valor_custeio_emenda": 336,
                   "valor_investimento_emenda": 0,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
@@ -95864,19 +95942,6 @@
                   "prazo_meses": 36
                 },
                 {
-                  "id": 122415,
-                  "sequencial": 213,
-                  "nome": "Meta 213",
-                  "descricao": "Solução Cloreto de Sódio 0,9% 100 ml",
-                  "unidade_medida": "FR",
-                  "quantidade": 7000,
-                  "valor_custeio_emenda": 25060,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
                   "id": 122412,
                   "sequencial": 210,
                   "nome": "Meta 210",
@@ -95910,6 +95975,19 @@
                   "unidade_medida": "FLAC",
                   "quantidade": 15000,
                   "valor_custeio_emenda": 3600,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
+                  "id": 122415,
+                  "sequencial": 213,
+                  "nome": "Meta 213",
+                  "descricao": "Solução Cloreto de Sódio 0,9% 100 ml",
+                  "unidade_medida": "FR",
+                  "quantidade": 7000,
+                  "valor_custeio_emenda": 25060,
                   "valor_investimento_emenda": 0,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
@@ -100763,19 +100841,6 @@
               },
               "metas": [
                 {
-                  "id": 102585,
-                  "sequencial": 2,
-                  "nome": "Meta 2",
-                  "descricao": "Réveillon de Rua de São Roque do Canaã - Shows Musicais com artistas regionais nos dia 31/01/2025 e 01/01/2026 (à partir das 21:00 do dia 31/12/2025 à 04:00 do dia 01/01/2026)",
-                  "unidade_medida": "OUTR",
-                  "quantidade": 1,
-                  "valor_custeio_emenda": 95000,
-                  "valor_investimento_emenda": 0,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 12
-                },
-                {
                   "id": 84400,
                   "sequencial": 1,
                   "nome": "Meta 1",
@@ -100813,6 +100878,19 @@
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
                   "prazo_meses": 36
+                },
+                {
+                  "id": 102585,
+                  "sequencial": 2,
+                  "nome": "Meta 2",
+                  "descricao": "Réveillon de Rua de São Roque do Canaã - Shows Musicais com artistas regionais nos dia 31/01/2025 e 01/01/2026 (à partir das 21:00 do dia 31/12/2025 à 04:00 do dia 01/01/2026)",
+                  "unidade_medida": "OUTR",
+                  "quantidade": 1,
+                  "valor_custeio_emenda": 95000,
+                  "valor_investimento_emenda": 0,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 12
                 },
                 {
                   "id": 102586,
@@ -101095,19 +101173,6 @@
               },
               "metas": [
                 {
-                  "id": 122880,
-                  "sequencial": 9,
-                  "nome": "Meta 9",
-                  "descricao": "Ampliação do sistema de abastecimento de água na zona urbana no Distrito de Vila de Laranja da Terra - CAPTAÇÃO",
-                  "unidade_medida": "UN",
-                  "quantidade": 1,
-                  "valor_custeio_emenda": 0,
-                  "valor_investimento_emenda": 32789.48,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 36
-                },
-                {
                   "id": 122876,
                   "sequencial": 5,
                   "nome": "Meta 5",
@@ -101129,6 +101194,19 @@
                   "quantidade": 35,
                   "valor_custeio_emenda": 0,
                   "valor_investimento_emenda": 5600,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 36
+                },
+                {
+                  "id": 122880,
+                  "sequencial": 9,
+                  "nome": "Meta 9",
+                  "descricao": "Ampliação do sistema de abastecimento de água na zona urbana no Distrito de Vila de Laranja da Terra - CAPTAÇÃO",
+                  "unidade_medida": "UN",
+                  "quantidade": 1,
+                  "valor_custeio_emenda": 0,
+                  "valor_investimento_emenda": 32789.48,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
                   "prazo_meses": 36
@@ -110191,32 +110269,6 @@
                   "prazo_meses": 1
                 },
                 {
-                  "id": 82134,
-                  "sequencial": 5,
-                  "nome": "Meta 5",
-                  "descricao": "Equipamentos de medição e instrumentação (Trenas: laser, rodinha, fibra de vidro 30m, trena metálica 50m)",
-                  "unidade_medida": "UN",
-                  "quantidade": 10,
-                  "valor_custeio_emenda": 0,
-                  "valor_investimento_emenda": 7000,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 2
-                },
-                {
-                  "id": 82135,
-                  "sequencial": 6,
-                  "nome": "Meta 6",
-                  "descricao": "Instrumentos técnicos de precisão (Paquímetro digital, fissurômetro, alicate ampímetro, alicate terrômetro, fasímentro, milimetro)",
-                  "unidade_medida": "UN",
-                  "quantidade": 7,
-                  "valor_custeio_emenda": 0,
-                  "valor_investimento_emenda": 10000,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 2
-                },
-                {
                   "id": 81656,
                   "sequencial": 2,
                   "nome": "Meta 2",
@@ -110238,6 +110290,32 @@
                   "quantidade": 1,
                   "valor_custeio_emenda": 0,
                   "valor_investimento_emenda": 2000,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 2
+                },
+                {
+                  "id": 82134,
+                  "sequencial": 5,
+                  "nome": "Meta 5",
+                  "descricao": "Equipamentos de medição e instrumentação (Trenas: laser, rodinha, fibra de vidro 30m, trena metálica 50m)",
+                  "unidade_medida": "UN",
+                  "quantidade": 10,
+                  "valor_custeio_emenda": 0,
+                  "valor_investimento_emenda": 7000,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 2
+                },
+                {
+                  "id": 82135,
+                  "sequencial": 6,
+                  "nome": "Meta 6",
+                  "descricao": "Instrumentos técnicos de precisão (Paquímetro digital, fissurômetro, alicate ampímetro, alicate terrômetro, fasímentro, milimetro)",
+                  "unidade_medida": "UN",
+                  "quantidade": 7,
+                  "valor_custeio_emenda": 0,
+                  "valor_investimento_emenda": 10000,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
                   "prazo_meses": 2
@@ -114485,19 +114563,6 @@
                   "prazo_meses": 24
                 },
                 {
-                  "id": 31550,
-                  "sequencial": 2,
-                  "nome": "Meta 2",
-                  "descricao": "Construção de  Barraginhas",
-                  "unidade_medida": "UN",
-                  "quantidade": 1106,
-                  "valor_custeio_emenda": 0,
-                  "valor_investimento_emenda": 1197635.09,
-                  "valor_custeio_proprio": 0,
-                  "valor_investimento_proprio": 0,
-                  "prazo_meses": 24
-                },
-                {
                   "id": 31549,
                   "sequencial": 1,
                   "nome": "Meta 1",
@@ -114506,6 +114571,19 @@
                   "quantidade": 1,
                   "valor_custeio_emenda": 0,
                   "valor_investimento_emenda": 142426.9,
+                  "valor_custeio_proprio": 0,
+                  "valor_investimento_proprio": 0,
+                  "prazo_meses": 24
+                },
+                {
+                  "id": 31550,
+                  "sequencial": 2,
+                  "nome": "Meta 2",
+                  "descricao": "Construção de  Barraginhas",
+                  "unidade_medida": "UN",
+                  "quantidade": 1106,
+                  "valor_custeio_emenda": 0,
+                  "valor_investimento_emenda": 1197635.09,
                   "valor_custeio_proprio": 0,
                   "valor_investimento_proprio": 0,
                   "prazo_meses": 24
